@@ -1,23 +1,21 @@
 use crate::math::tuple::Tuple;
 use crate::math::vector::Vector;
 
+#[derive(PartialEq)]
 pub struct Point {
   pub x: f64,
   pub y: f64,
-  pub z: f64
+  pub z: f64,
+  pub w: f64
 }
 
 impl Point {
   pub fn new(x: f64, y: f64, z: f64) -> Point {
-    Point { x: x, y: y, z: z }
+    Point { x: x, y: y, z: z, w: 1.0 }
   }
 
   pub fn empty() -> Point {
-    Point { x: 0.0, y: 0.0, z: 0.0}
-  }
-
-  pub fn w(&self) -> f64 {
-    1.0
+    Point { x: 0.0, y: 0.0, z: 0.0, w: 1.0 }
   }
 
   pub fn add_vector(&self, r_hand: &Vector) -> Point {
@@ -59,6 +57,6 @@ impl Point {
 
 impl Tuple for Point {
   fn get_quad(&self) -> (f64, f64, f64, f64) {
-    (self.x, self.y, self.z, self.w())
+    (self.x, self.y, self.z, self.w)
   }
 }

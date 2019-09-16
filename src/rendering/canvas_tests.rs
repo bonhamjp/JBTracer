@@ -1,9 +1,11 @@
 #[cfg(test)]
 mod tests {
+  use crate::rendering::Canvas;
+
+  use crate::math::Color;
+
   #[test]
   fn new_canvas_sets_width_height_and_correct_sized_buffer() {
-    use crate::rendering::Canvas;
-
     let canvas = Canvas::new(4, 2);
 
     assert_eq!(canvas.width, 4);
@@ -13,8 +15,6 @@ mod tests {
 
   #[test]
   fn new_colors_are_set_to_default_value() {
-    use crate::rendering::Canvas;
-
     let canvas = Canvas::new(2, 2);
 
     assert_eq!(canvas.color_buffer[0].display_values(), (255, 255, 255, 255));
@@ -25,9 +25,6 @@ mod tests {
 
   #[test]
   fn outputs_data_in_ppm_v3_format() {
-    use crate::rendering::Canvas;
-    use crate::math::Color;
-
     let mut canvas = Canvas::new(2, 2);
 
     canvas.color_pixel(0, 0, Color::new(1.0, 0.0, 0.0, 1.0));
@@ -45,9 +42,6 @@ mod tests {
 
   #[test]
   fn outputs_data_in_ppm_v3_format_with_max_70_char_lines() {
-    use crate::rendering::Canvas;
-    use crate::math::Color;
-
     let mut canvas = Canvas::new(8, 2);
 
     canvas.color_pixel(0, 0, Color::new(1.0, 0.0, 0.0, 1.0));
@@ -73,9 +67,6 @@ mod tests {
 
   #[test]
   fn colors_pixel_at_location_with_provided_color() {
-    use crate::rendering::Canvas;
-    use crate::math::Color;
-
     let mut canvas = Canvas::new(4, 4);
 
     let red = Color::new(1.0, 0.0, 0.0, 1.0);
@@ -103,9 +94,6 @@ mod tests {
 
   #[test]
   fn get_pixel_color_at_canvas_location() {
-    use crate::rendering::Canvas;
-    use crate::math::Color;
-
     let mut canvas = Canvas::new(4, 4);
 
     let red = Color::new(1.0, 0.0, 0.0, 1.0);

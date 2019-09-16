@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
+  use crate::math::Matrix2x2;
+
   #[test]
   fn new_sets_values() {
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
 
     assert_eq!(matrix.elements[0], 1.0);
@@ -14,8 +14,6 @@ mod tests {
 
   #[test]
   fn identity_sets_identity_matrix() {
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix2x2::identity();
 
     assert_eq!(matrix.elements[0], 1.0);
@@ -26,8 +24,6 @@ mod tests {
 
   #[test]
   fn returns_element_at_row_column() {
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
 
     assert_eq!(matrix.element(0, 0), 1.0);
@@ -38,8 +34,6 @@ mod tests {
 
   #[test]
   fn returns_contents_of_row() {
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
 
     assert_eq!(matrix.row(0), (1.0, 2.0));
@@ -48,8 +42,6 @@ mod tests {
 
   #[test]
   fn recognizes_equal_matrices() {
-    use crate::math::Matrix2x2;
-
     let matrix_1 = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
     let matrix_2 = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
 
@@ -58,8 +50,6 @@ mod tests {
 
   #[test]
   fn recognizes_non_equal_matrices() {
-    use crate::math::Matrix2x2;
-
     let matrix_1 = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
     let matrix_2 = Matrix2x2::new(2.0, 2.0, 3.0, 4.0);
 
@@ -68,8 +58,6 @@ mod tests {
 
   #[test]
   fn transpose_swaps_matrix_rows_with_columns() {
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix2x2::new(1.0, 2.0, 3.0, 4.0);
     
     let transposed_matrix = matrix.transpose();
@@ -80,8 +68,6 @@ mod tests {
 
   #[test]
   fn calculates_determinant() {
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix2x2::new(1.0, 5.0, -3.0, 2.0);
     
     assert_eq!(matrix.determinant(), 17.0);

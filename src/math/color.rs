@@ -4,7 +4,6 @@ use num::clamp;
 const COLOR_RANGE: u64 = 255;
 
 #[derive(PartialEq)]
-#[derive(Debug)]
 pub struct Color {
   pub r: f64,
   pub g: f64,
@@ -19,6 +18,44 @@ impl Color {
 
   pub fn empty() -> Color {
     Color { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
+  }
+
+  pub fn mult_color(&self, r_side: &Color) -> Color {
+    Color::new(self.r * r_side.r, self.g * r_side.g, self.b * r_side.b, 1.0)
+  }
+
+  pub fn mult_scalar(&self, r_side: f64) -> Color {
+    Color::new(self.r * r_side, self.g * r_side, self.b * r_side, 1.0)
+  }
+
+  pub fn add_color(&self, r_side: &Color) -> Color {
+    Color::new(self.r + r_side.r, self.g + r_side.g, self.b + r_side.b, 1.0)
+  }
+
+  pub fn divide_color(&self, r_side: &Color) -> Color {
+    let r;
+    let g;
+    let b;
+
+    if r_side.r > 0.0 {
+      r = self.r / r_side.r;
+    } else {
+      r = 0.0;
+    }
+
+    if r_side.g > 0.0 {
+      g = self.g / r_side.g;
+    } else {
+      g = 0.0;
+    }
+
+    if r_side.b > 0.0 {
+      b = self.b / r_side.b;
+    } else {
+      b = 0.0;
+    }
+
+    Color::new(r, g, b, 1.0)
   }
 
   pub fn r_display(&self) -> u64 {

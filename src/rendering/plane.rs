@@ -15,22 +15,22 @@ use crate::math::Vector;
 use crate::math::Matrix4x4;
 
 #[derive(PartialEq)]
-pub struct Sphere {
+pub struct Plane {
   pub transform: Matrix4x4,
   pub material: Material
 }
 
-impl Sphere {
-  pub fn new(transform: Matrix4x4, material: Material) -> Sphere {
-    Sphere { transform: transform, material: material }
+impl Plane {
+  pub fn new(transform: Matrix4x4, material: Material) -> Plane {
+    Plane { transform: transform, material: material }
   }
   
-  pub fn default() -> Sphere {
-    Sphere { transform: Matrix4x4::identity(), material: Material::default() }
+  pub fn default() -> Plane {
+    Plane { transform: Matrix4x4::identity(), material: Material::default() }
   }
 }
 
-impl Shape for Sphere {
+impl Shape for Plane {
   fn get_transform(&self) -> &Matrix4x4 {
     &self.transform
   }
@@ -58,29 +58,20 @@ impl Shape for Sphere {
     );
 
     let mut intersections: Vec<Intersection> = Vec::new();
+    
+    // TODO: Use global epsilon value
+    // Ray parallel to plane 
+    if transformed_ray.direction.y.abs() < 0.0001 {
+      return intersections;
+    } 
 
-    let sphere_to_ray = transformed_ray.origin.subtract_point(&Point::new(0.0, 0.0, 0.0));
-
-    let a = transformed_ray.direction.dot(&transformed_ray.direction);
-    let b = 2.0 * transformed_ray.direction.dot(&sphere_to_ray);
-    let c = sphere_to_ray.dot(&sphere_to_ray) - 1.0;
-
-    let discriminant = b * b - 4.0 * a * c;
-
-    // missed if discriminant negative
-    if discriminant >= 0.0 {
-      let sphere = self as &Sphere;
-
-      intersections.push(Intersection::new((-b - discriminant.sqrt()) / (2.0 * a), sphere));
-      intersections.push(Intersection::new((-b + discriminant.sqrt()) / (2.0 * a), sphere));
-    }
-
+    intersections.push(Intersection::new(-transformed_ray.origin.y / transformed_ray.direction.y, self as &Plane));
+    
     intersections
   }
 
   fn normal_at(&self, point: &Point) -> Vector {
-    let object_point = self.transform.inverse().mult_point(point);
-    let object_normal = object_point.subtract_point(&Point::empty());
+    let object_normal = Vector::new(0.0, 1.0, 0.0);
 
     let mut world_normal = self.transform.inverse().transpose().mult_vector(&object_normal);
     world_normal.w = 0.0;
@@ -89,7 +80,7 @@ impl Shape for Sphere {
   }
 
   fn get_base_type(&self) -> ShapeType {
-    ShapeType::Sphere
+    ShapeType::Plane
   }
 
   fn as_any(&self) -> &dyn Any {
@@ -100,7 +91,7 @@ impl Shape for Sphere {
     if self.get_base_type() != r_hand.get_base_type() {
       return false;
     } else {
-      return self as *const _ == r_hand.as_any().downcast_ref::<Sphere>().unwrap() as *const _
+      return self as *const _ == r_hand.as_any().downcast_ref::<Plane>().unwrap() as *const _
     }
   }
 }

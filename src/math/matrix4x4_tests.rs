@@ -1,9 +1,16 @@
 #[cfg(test)]
 mod tests {
+  use std::f64;
+
+  use crate::math::Matrix4x4;
+  use crate::math::Matrix3x3;
+
+  use crate::math::tuple::Tuple;
+  use crate::math::Point;
+  use crate::math::Vector;
+
   #[test]
   fn new_sets_values() {
-    use crate::math::Matrix4x4;
-
     let matrix = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
 
     assert_eq!(matrix.elements[0], 1.0);
@@ -26,8 +33,6 @@ mod tests {
 
   #[test]
   fn identity_sets_identity_matrix() {
-    use crate::math::Matrix4x4;
-
     let matrix = Matrix4x4::identity();
 
     assert_eq!(matrix.elements[0], 1.0);
@@ -50,8 +55,6 @@ mod tests {
 
   #[test]
   fn returns_element_at_row_column() {
-    use crate::math::Matrix4x4;
-
     let matrix = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
 
     assert_eq!(matrix.element(0, 0), 1.0);
@@ -74,8 +77,6 @@ mod tests {
 
   #[test]
   fn returns_contents_of_row() {
-    use crate::math::Matrix4x4;
-
     let matrix = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
 
     assert_eq!(matrix.row(0), (1.0, 2.0, 3.0, 4.0));
@@ -86,8 +87,6 @@ mod tests {
 
   #[test]
   fn recognizes_equal_matrices() {
-    use crate::math::Matrix4x4;
-
     let matrix_1 = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
     let matrix_2 = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
 
@@ -96,8 +95,6 @@ mod tests {
 
   #[test]
   fn recognizes_non_equal_matrices() {
-    use crate::math::Matrix4x4;
-
     let matrix_1 = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
     let matrix_2 = Matrix4x4::new(2.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
 
@@ -106,8 +103,6 @@ mod tests {
 
   #[test]
   fn multiplies_two_matrices_together() {
-    use crate::math::Matrix4x4;
-
     let matrix_1 = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0);
     let matrix_2 = Matrix4x4::new(-2.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, -1.0, 4.0, 3.0, 6.0, 5.0, 1.0, 2.0, 7.0, 8.0);
 
@@ -121,8 +116,6 @@ mod tests {
 
   #[test]
   fn matrix_multiplied_with_identity_matrix_equals_original_matrix() {
-    use crate::math::Matrix4x4;
-
     let matrix_1 = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
     let matrix_identity = Matrix4x4::identity();
 
@@ -133,10 +126,6 @@ mod tests {
 
   #[test]
   fn multiplies_matrix_with_point() {
-    use crate::math::Matrix4x4;
-    use crate::math::tuple::Tuple;
-    use crate::math::Point;
-
     let matrix_1 = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0);
     let point = Point::new(1.0, 2.0, 3.0);
 
@@ -150,8 +139,6 @@ mod tests {
 
   #[test]
   fn transpose_swaps_matrix_rows_with_columns() {
-    use crate::math::Matrix4x4;
-
     let matrix = Matrix4x4::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0);
     
     let transposed_matrix = matrix.transpose();
@@ -164,9 +151,6 @@ mod tests {
 
   #[test]
   fn submatrix_returns_3x3_matrix_with_all_elements_not_from_row_and_column_args() {
-    use crate::math::Matrix4x4;
-    use crate::math::Matrix3x3;
-
     let matrix = Matrix4x4::new(-6.0, 1.0, 1.0, 6.0, -8.0, 5.0, 8.0, 6.0, -1.0, 0.0, 8.0, 2.0, -7.0, 1.0, -1.0, 1.0);
     
     let submatrix = matrix.submatrix(2, 1);
@@ -178,8 +162,6 @@ mod tests {
 
   #[test]
   fn minor_returns_the_determinant_of_the_submatrix_for_a_row_column() {
-    use crate::math::Matrix4x4;
-    
     let matrix = Matrix4x4::new(-2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0);
 
     let submatrix = matrix.submatrix(1, 0);
@@ -190,8 +172,6 @@ mod tests {
 
   #[test]
   fn cofactor_returns_the_determinant_of_the_submatrix_for_a_row_column_negated_if_odd_summed() {
-    use crate::math::Matrix4x4;
-    
     let matrix = Matrix4x4::new(-2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0);
 
     assert_eq!(matrix.minor(0, 0), 690.0);
@@ -202,8 +182,6 @@ mod tests {
 
   #[test]
   fn determinant_is_calculated_using_cofactor_of_each_column_of_row_one_summed() {
-    use crate::math::Matrix4x4;
-    
     let matrix = Matrix4x4::new(-2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0);
 
     assert_eq!(matrix.cofactor(0, 0), 690.0);
@@ -215,8 +193,6 @@ mod tests {
 
   #[test]
   fn checks_if_matrix_is_invertible_if_determinant_is_not_zero() {
-    use crate::math::Matrix4x4;
-    
     let matrix = Matrix4x4::new(6.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 6.0, 4.0, -9.0, 3.0, -7.0, 9.0, 1.0, 7.0, -6.0);
 
     assert_eq!(matrix.determinant(), -2120.0);
@@ -225,8 +201,6 @@ mod tests {
 
   #[test]
   fn checks_if_matrix_is_not_invertible_if_determinant_is_zero() {
-    use crate::math::Matrix4x4;
-
     let matrix = Matrix4x4::new(-4.0, 2.0, -2.0, -3.0, 9.0, 6.0, 2.0, 6.0, 0.0, -5.0, 3.0, -7.0, 0.0, 0.0, 0.0, 0.0);
 
     assert_eq!(matrix.determinant(), 0.0);
@@ -235,8 +209,6 @@ mod tests {
 
   #[test]
   fn inverse_creates_inversion_of_matrix() {
-    use crate::math::Matrix4x4;
-
     let matrix_1 = Matrix4x4::new(-5.0, 2.0, 6.0, -8.0, 1.0, -5.0, 1.0, 8.0, 7.0, 7.0, -6.0, -7.0, 1.0, -3.0, 7.0, 4.0);
 
     let inverted_1 = matrix_1.inverse();
@@ -271,8 +243,6 @@ mod tests {
 
   #[test]
   fn matrix_multiplied_by_another_matrix_then_inversion_of_the_same_matrix_results_in_original_matrix() {
-    use crate::math::Matrix4x4;
-
     let matrix_1 = Matrix4x4::new(3.0, -9.0, 7.0, 3.0, 3.0, -8.0, 2.0, -9.0, -4.0, 4.0, 4.0, 1.0, -6.0, 5.0, -1.0, 1.0);
     let matrix_2 = Matrix4x4::new(8.0, 2.0, 2.0, 2.0, 3.0, -1.0, 7.0, 0.0, 7.0, 0.0, 5.0, 4.0, 6.0, -2.0, 0.0, 5.0);
 
@@ -284,8 +254,6 @@ mod tests {
 
   #[test]
   fn matrix_translation_sets_up_identity_matrix_with_translations_in_last_row() {
-    use crate::math::Matrix4x4;
-    
     let translation = Matrix4x4::translate(10.0, 20.0, 30.0);
 
     assert_eq!(translation.row(0), (1.0, 0.0, 0.0, 10.0));
@@ -296,9 +264,6 @@ mod tests {
 
   #[test]
   fn point_multipled_by_translation_matrix_moves_point_by_translation() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let translation = Matrix4x4::translate(5.0, -3.0, 2.0);
 
     let point = Point::new(-3.0, 4.0, 5.0);
@@ -312,9 +277,6 @@ mod tests {
 
   #[test]
   fn point_multiplied_by_inverse_of_translation_matrix_moves_in_reverse() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let translation = Matrix4x4::translate(5.0, -3.0, 2.0);
 
     let inverted = translation.inverse();
@@ -330,9 +292,6 @@ mod tests {
 
   #[test]
   fn vector_multipled_by_translation_matrix_does_not_alter_vector() {
-    use crate::math::Matrix4x4;
-    use crate::math::Vector;
-    
     let translation = Matrix4x4::translate(5.0, -3.0, 2.0);
 
     let vector = Vector::new(-3.0, 4.0, 2.0);
@@ -346,8 +305,6 @@ mod tests {
 
   #[test]
   fn matrix_scale_sets_up_identity_matrix_with_scale_in_diagonal() {
-    use crate::math::Matrix4x4;
-    
     let scale = Matrix4x4::scale(4.0, 5.0, 6.0);
 
     assert_eq!(scale.row(0), (4.0, 0.0, 0.0, 0.0));
@@ -358,9 +315,6 @@ mod tests {
 
   #[test]
   fn point_multipled_by_scale_matrix_scales_point_by_factors() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let scale = Matrix4x4::scale(2.0, 3.0, 4.0);
 
     let point = Point::new(-4.0, 6.0, 8.0);
@@ -374,9 +328,6 @@ mod tests {
 
   #[test]
   fn point_multiplied_by_inverse_of_scaling_matrix_scales_in_opposite_direction() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let scale = Matrix4x4::scale(2.0, 3.0, 4.0);
 
     let inverted = scale.inverse();
@@ -392,9 +343,6 @@ mod tests {
 
   #[test]
   fn vector_multipled_by_scale_matrix_scales_vector_by_factors() {
-    use crate::math::Matrix4x4;
-    use crate::math::Vector;
-    
     let scale = Matrix4x4::scale(2.0, 3.0, 4.0);
 
     let vector = Vector::new(-4.0, 6.0, 8.0);
@@ -408,9 +356,6 @@ mod tests {
 
   #[test]
   fn reflection_is_scaling_by_negative_value() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let reflection = Matrix4x4::scale(-1.0, 1.0, 1.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -424,11 +369,6 @@ mod tests {
 
   #[test]
   fn rotating_point_around_x_axis() {
-    use std::f64;
-
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let point = Point::new(0.0, 1.0, 0.0);
     
     let x_half_quarter_rotation = Matrix4x4::rotate_x(f64::consts::PI / 4.0);
@@ -451,11 +391,6 @@ mod tests {
 
   #[test]
   fn rotating_point_around_inverse_x_axis_rotates_in_opposite_direction() {
-    use std::f64;
-
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let point = Point::new(0.0, 1.0, 0.0);
     
     let x_half_quarter_rotation = Matrix4x4::rotate_x(f64::consts::PI / 4.0);
@@ -472,11 +407,6 @@ mod tests {
 
   #[test]
   fn rotating_point_around_y_axis() {
-    use std::f64;
-
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let point = Point::new(0.0, 0.0, 1.0);
     
     let y_half_quarter_rotation = Matrix4x4::rotate_y(f64::consts::PI / 4.0);
@@ -499,11 +429,6 @@ mod tests {
 
   #[test]
   fn rotating_point_around_z_axis() {
-    use std::f64;
-
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-
     let point = Point::new(0.0, 1.0, 0.0);
     
     let z_half_quarter_rotation = Matrix4x4::rotate_z(f64::consts::PI / 4.0);
@@ -526,9 +451,6 @@ mod tests {
 
   #[test]
   fn shearing_x_in_proportion_to_y() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let shearing = Matrix4x4::shear(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -542,9 +464,6 @@ mod tests {
 
   #[test]
   fn shearing_x_in_proportion_to_z() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let shearing = Matrix4x4::shear(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -558,9 +477,6 @@ mod tests {
 
   #[test]
   fn shearing_y_in_proportion_to_x() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let shearing = Matrix4x4::shear(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -574,9 +490,6 @@ mod tests {
 
   #[test]
   fn shearing_y_in_proportion_to_z() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let shearing = Matrix4x4::shear(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -590,9 +503,6 @@ mod tests {
 
   #[test]
   fn shearing_z_in_proportion_to_x() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let shearing = Matrix4x4::shear(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -606,9 +516,6 @@ mod tests {
 
   #[test]
   fn shearing_z_in_proportion_to_y() {
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let shearing = Matrix4x4::shear(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
     let point = Point::new(2.0, 3.0, 4.0);
@@ -622,11 +529,6 @@ mod tests {
 
   #[test]
   fn transformation_applied_in_sequence() {
-    use std::f64;
-
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let x_rotation = Matrix4x4::rotate_x(f64::consts::PI / 2.0);
     let scaling = Matrix4x4::scale(5.0, 5.0, 5.0);
     let translation = Matrix4x4::translate(10.0, 5.0, 7.0);
@@ -662,12 +564,6 @@ mod tests {
   #[test]
   fn chaining_transformation_together() {
     // must be done in reversed order
-    
-    use std::f64;
-
-    use crate::math::Matrix4x4;
-    use crate::math::Point;
-    
     let x_rotation = Matrix4x4::rotate_x(f64::consts::PI / 2.0);
     let scaling = Matrix4x4::scale(5.0, 5.0, 5.0);
     let translation = Matrix4x4::translate(10.0, 5.0, 7.0);
@@ -682,5 +578,50 @@ mod tests {
     assert!((transformed_x - 15.0).abs() < 0.0001);
     assert!((transformed_y - 0.0).abs() < 0.0001);
     assert!((transformed_z - 7.0).abs() < 0.0001);
+  }
+
+  #[test]
+  fn view_matrix_for_default_orientation() {
+    let from = Point::new(0.0, 0.0, 0.0);
+    let to = Point::new(0.0, 0.0, -1.0);
+    let up = Vector::new(0.0, 1.0, 0.0);
+    let view_transform = Matrix4x4::view_transform(&from, &to, &up);
+
+    assert!(view_transform == Matrix4x4::identity());
+  }
+
+  #[test]
+  fn view_matrix_moves_the_scene() {
+    let from = Point::new(0.0, 0.0, 8.0);
+    let to = Point::new(0.0, 0.0, -1.0);
+    let up = Vector::new(0.0, 1.0, 0.0);
+    let view_transform = Matrix4x4::view_transform(&from, &to, &up);
+
+    assert!(view_transform == Matrix4x4::translate(0.0, 0.0, -8.0));
+  }
+
+  #[test]
+  fn arbitrary_view_transform() {
+    let from = Point::new(1.0, 3.0, 2.0);
+    let to = Point::new(4.0, -2.0, 8.0);
+    let up = Vector::new(1.0, 1.0, 0.0);
+    let view_transform = Matrix4x4::view_transform(&from, &to, &up);
+
+    assert_eq!(view_transform.element(0, 0), -0.5070925528371099);
+    assert_eq!(view_transform.element(0, 1), 0.5070925528371099);
+    assert_eq!(view_transform.element(0, 2), 0.6761234037828132);
+    assert_eq!(view_transform.element(0, 3), -2.366431913239846);
+    assert_eq!(view_transform.element(1, 0), 0.7677159338596801);
+    assert_eq!(view_transform.element(1, 1), 0.6060915267313263);
+    assert_eq!(view_transform.element(1, 2), 0.12121830534626524);
+    assert_eq!(view_transform.element(1, 3), -2.8284271247461894);
+    assert_eq!(view_transform.element(2, 0), -0.35856858280031806);
+    assert_eq!(view_transform.element(2, 1), 0.5976143046671968);
+    assert_eq!(view_transform.element(2, 2), -0.7171371656006361);
+    assert_eq!(view_transform.element(2, 3), 0.0);
+    assert_eq!(view_transform.element(3, 0), 0.0);
+    assert_eq!(view_transform.element(3, 1), 0.0);
+    assert_eq!(view_transform.element(3, 2), 0.0);
+    assert_eq!(view_transform.element(3, 3), 1.0);
   }
 }

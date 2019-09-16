@@ -1,5 +1,6 @@
 use crate::rendering::Intersection;
 
+use crate::math::Matrix4x4;
 use crate::math::Point;
 use crate::math::Vector;
 
@@ -21,5 +22,15 @@ impl Ray {
     let projected_direction = self.direction.multiply(t);
 
     start_position.add_vector(&projected_direction)
+  }
+
+  pub fn transform(&self, transformation: &Matrix4x4) -> Ray {
+    let (new_position_x, new_position_y, new_position_z, _) = transformation.mult4x1(&self.origin);
+    let (new_direction_x, new_direction_y, new_direction_z, _) = transformation.mult4x1(&self.direction);
+
+    let new_origin = Point::new(new_position_x, new_position_y, new_position_z);
+    let new_direction = Vector::new(new_direction_x, new_direction_y, new_direction_z);
+
+    Ray { origin: new_origin, direction: new_direction }
   }
 }

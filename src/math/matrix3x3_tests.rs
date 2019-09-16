@@ -1,9 +1,10 @@
 #[cfg(test)]
 mod tests {
+  use crate::math::Matrix3x3;
+  use crate::math::Matrix2x2;
+
   #[test]
   fn new_sets_values() {
-    use crate::math::Matrix3x3;
-
     let matrix = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
 
     assert_eq!(matrix.elements[0], 1.0);
@@ -19,8 +20,6 @@ mod tests {
 
   #[test]
   fn identity_sets_identity_matrix() {
-    use crate::math::Matrix3x3;
-
     let matrix = Matrix3x3::identity();
 
     assert_eq!(matrix.elements[0], 1.0);
@@ -36,8 +35,6 @@ mod tests {
 
   #[test]
   fn returns_element_at_row_column() {
-    use crate::math::Matrix3x3;
-
     let matrix = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
 
     assert_eq!(matrix.element(0, 0), 1.0);
@@ -53,8 +50,6 @@ mod tests {
 
   #[test]
   fn returns_contents_of_row() {
-    use crate::math::Matrix3x3;
-
     let matrix = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
 
     assert_eq!(matrix.row(0), (1.0, 2.0, 3.0));
@@ -64,8 +59,6 @@ mod tests {
 
   #[test]
   fn recognizes_equal_matrices() {
-    use crate::math::Matrix3x3;
-
     let matrix_1 = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
     let matrix_2 = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
 
@@ -74,8 +67,6 @@ mod tests {
 
   #[test]
   fn recognizes_non_equal_matrices() {
-    use crate::math::Matrix3x3;
-
     let matrix_1 = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
     let matrix_2 = Matrix3x3::new(2.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
 
@@ -84,8 +75,6 @@ mod tests {
 
   #[test]
   fn transpose_swaps_matrix_rows_with_columns() {
-    use crate::math::Matrix3x3;
-
     let matrix = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
     
     let transposed_matrix = matrix.transpose();
@@ -97,9 +86,6 @@ mod tests {
 
   #[test]
   fn submatrix_returns_2x2_matrix_with_all_elements_not_from_row_and_column_args() {
-    use crate::math::Matrix3x3;
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix3x3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
     
     let submatrix = matrix.submatrix(0, 2);
@@ -110,9 +96,6 @@ mod tests {
 
   #[test]
   fn minor_returns_the_determinant_of_the_submatrix_for_a_row_column() {
-    use crate::math::Matrix3x3;
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
     
     let submatrix = matrix.submatrix(1, 0);
@@ -123,9 +106,6 @@ mod tests {
 
   #[test]
   fn cofactor_returns_the_determinant_of_the_submatrix_for_a_row_column_negated_if_odd_summed() {
-    use crate::math::Matrix3x3;
-    use crate::math::Matrix2x2;
-
     let matrix = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
 
     assert_eq!(matrix.minor(0, 0), -12.0);
@@ -136,8 +116,6 @@ mod tests {
 
   #[test]
   fn determinant_is_calculated_using_cofactor_of_each_column_of_row_one_summed() {
-    use crate::math::Matrix3x3;
-    
     let matrix = Matrix3x3::new(1.0, 2.0, 6.0, -5.0, 8.0, -4.0, 2.0, 6.0, 4.0);
 
     assert_eq!(matrix.cofactor(0, 0), 56.0);

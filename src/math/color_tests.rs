@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
+  use crate::math::Color;
+
   #[test]
   fn new_sets_values() {
-    use crate::math::Color;
-
     let color = Color::new(0.5, 0.0, 0.25, 1.0);
 
     assert_eq!(color.r, 0.5);
@@ -14,8 +14,6 @@ mod tests {
 
   #[test]
   fn empty_sets_0_values() {
-    use crate::math::Color;
-
     let color = Color::empty();
 
     assert_eq!(color.r, 0.0);
@@ -26,8 +24,6 @@ mod tests {
 
   #[test]
   fn r_display_returns_r_in_0_255_range() {
-    use crate::math::Color;
-
     let color_1 = Color::new(0.9, 0.0, 0.0, 1.0);
 
     assert_eq!(color_1.r_display(), 229);
@@ -43,8 +39,6 @@ mod tests {
 
   #[test]
   fn g_display_returns_g_in_0_255_range() {
-    use crate::math::Color;
-
     let color_1 = Color::new(0.0, 0.8, 0.0, 1.0);
 
     assert_eq!(color_1.g_display(), 204);
@@ -60,8 +54,6 @@ mod tests {
 
   #[test]
   fn b_display_returns_b_in_0_255_range() {
-    use crate::math::Color;
-
     let color_1 = Color::new(0.0, 0.0, 0.7, 1.0);
 
     assert_eq!(color_1.b_display(), 178);
@@ -77,8 +69,6 @@ mod tests {
 
   #[test]
   fn a_display_returns_a_in_0_255_range() {
-    use crate::math::Color;
-
     let color_1 = Color::new(0.0, 0.0, 0.0, 0.6);
 
     assert_eq!(color_1.a_display(), 153);
@@ -94,8 +84,6 @@ mod tests {
 
   #[test]
   fn display_values_returns_tuple_of_values_in_0_255_range() {
-    use crate::math::Color;
-
     let color = Color::new(0.9, 0.8, 0.7, 0.6);
 
     assert_eq!(color.display_values(), (229, 204, 178, 153));

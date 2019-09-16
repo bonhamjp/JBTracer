@@ -4,6 +4,17 @@ use std::fs::File;
 extern crate chrono;
 use chrono::{Datelike, Timelike, Utc};
 
+use crate::rendering::shape::Shape;
+use crate::rendering::Sphere;
+
+use crate::rendering::PointLight;
+
+use crate::rendering::Ray;
+use crate::rendering::Intersection;
+
+use crate::math::tuple::Tuple;
+use crate::math::Point;
+use crate::math::Vector;
 use crate::math::Color;
 
 const MAX_PPM_LINE_WIDTH: usize = 70; 
@@ -47,11 +58,11 @@ impl Canvas {
     // colr value range
     image_data_lines.push(String::from("255\n"));
 
-    for i in 0..self.height {
+    for y in 0..self.height {
       let mut color_row = String::new();
 
-      for j in 0..self.width {
-        let (display_r, display_g, display_b, _) = self.pixel_color(i, j).display_values();
+      for x in 0..self.width {
+        let (display_r, display_g, display_b, _) = self.pixel_color(y, x).display_values();
 
         let r_string = &format!("{} ", display_r).to_string();
         if (color_row.chars().count() + r_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH) {

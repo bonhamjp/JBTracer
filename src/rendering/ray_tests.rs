@@ -1,12 +1,15 @@
 #[cfg(test)]
 mod tests {
+  use crate::rendering::Ray;
+
+  use crate::math::tuple::Tuple;
+  use crate::math::Point;
+  use crate::math::Vector;
+
+  use crate::math::Matrix4x4;
+
   #[test]
   fn new_sets_values() {
-    use crate::rendering::Ray;
-    use crate::math::Point;
-    use crate::math::Vector;
-    use crate::math::tuple::Tuple;
-
     let ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(4.0, 5.0, 6.0));
 
     let (ray_origin_x, ray_origin_y, ray_origin_z, _) = ray.origin.get_quad();
@@ -24,11 +27,6 @@ mod tests {
 
   #[test]
   fn computes_position_from_ray_and_distance() {
-    use crate::rendering::Ray;
-    use crate::math::Point;
-    use crate::math::Vector;
-    use crate::math::tuple::Tuple;
-
     let ray = Ray::new(&Point::new(2.0, 3.0, 4.0), &Vector::new(1.0, 0.0, 0.0));
 
     let position_1 = ray.position(0.0);
@@ -62,5 +60,29 @@ mod tests {
     assert_eq!(position_4_x, 4.5);
     assert_eq!(position_4_y, 3.0);
     assert_eq!(position_4_z, 4.0);
+  }
+
+  #[test]
+  fn translating_ray() {
+    let mut ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(0.0, 1.0, 0.0));
+
+    let translation = Matrix4x4::translate(3.0, 4.0, 5.0);
+
+    let transformed_ray = ray.transform(&translation);
+
+    assert!(transformed_ray.origin.get_quad() == (4.0, 6.0, 8.0, 1.0));
+    assert!(transformed_ray.direction.get_quad() == (0.0, 1.0, 0.0, 0.0));
+  }
+
+  #[test]
+  fn scaling_ray() {
+    let mut ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(0.0, 1.0, 0.0));
+
+    let scale = Matrix4x4::scale(2.0, 3.0, 4.0);
+
+    let transformed_ray = ray.transform(&scale);
+
+    assert!(transformed_ray.origin.get_quad() == (2.0, 6.0, 12.0, 1.0));
+    assert!(transformed_ray.direction.get_quad() == (0.0, 3.0, 0.0, 0.0));
   }
 }

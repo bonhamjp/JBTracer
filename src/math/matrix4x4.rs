@@ -1,10 +1,13 @@
 use crate::math::matrix3x3::Matrix3x3;
 
 use crate::math::tuple::Tuple;
+use crate::math::Point;
+use crate::math::Vector;
 
 // TODO: Declare this delta value somewhere global
 const ROUNDING_DELTA: f64 = 0.0001;
 
+#[derive(PartialEq)]
 pub struct Matrix4x4 {
   pub elements: [f64; 16]
 }
@@ -149,6 +152,19 @@ impl Matrix4x4 {
             self.element(3, 3) * r_hand_w;
 
     (x, y, z, w)
+  }
+
+  // convenience methods
+  pub fn mult_point(&self, r_hand: &Point) -> Point {
+    let (new_x, new_y, new_z, new_w) = self.mult4x1(r_hand);
+
+    Point::new(new_x, new_y, new_z)
+  }
+
+  pub fn mult_vector(&self, r_hand: &Vector) -> Vector {
+    let (new_x, new_y, new_z, new_w) = self.mult4x1(r_hand);
+
+    Vector::new(new_x, new_y, new_z)
   }
 
   pub fn transpose(&self) -> Matrix4x4 {
@@ -303,5 +319,21 @@ impl Matrix4x4 {
     matrix.elements[9] = zy;
 
     matrix
+  }
+
+  pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> Matrix4x4 {
+    let forward = to.subtract_point(&from).normalize();
+    let up_n = up.normalize();
+    let left = forward.cross(&up_n);
+    let true_up = left.cross(&forward);
+
+    let orientation = Matrix4x4::new(
+      left.x, left.y, left.z, 0.0,
+      true_up.x, true_up.y, true_up.z, 0.0,
+      -forward.x, -forward.y, -forward.z, 0.0,
+      0.0, 0.0, 0.0, 1.0
+    );
+
+    orientation.mult4x4(&Matrix4x4::translate(-from.x, -from.y, -from.z))
   }
 }
