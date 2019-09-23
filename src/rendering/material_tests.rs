@@ -2,33 +2,24 @@
 mod tests {
   use crate::rendering::Material;
 
+  use crate::rendering::pattern::Pattern;
+  use crate::rendering::SolidPattern;
+
   use crate::math::Color;
+
+  use crate::math::Matrix4x4;
 
   #[test]
   fn new_sets_values() {
-    let material = Material::new(Color::new(0.5, 0.1, 0.75, 1.0), 0.1, 0.2, 0.3, 0.4);
+    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
+    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
 
-    assert_eq!(material.color.r, 0.5);
-    assert_eq!(material.color.g, 0.1);
-    assert_eq!(material.color.b, 0.75);
-    assert_eq!(material.color.a, 1.0);
-    assert_eq!(material.ambient, 0.1);
-    assert_eq!(material.diffuse, 0.2);
-    assert_eq!(material.specular, 0.3);
-    assert_eq!(material.shininess, 0.4);
-  }
-
-  #[test]
-  fn default_sets_base_values() {
-    let material = Material::default();
-
-    assert_eq!(material.color.r, 1.0);
-    assert_eq!(material.color.g, 1.);
-    assert_eq!(material.color.b, 1.0);
-    assert_eq!(material.color.a, 1.0);
     assert_eq!(material.ambient, 0.1);
     assert_eq!(material.diffuse, 0.9);
     assert_eq!(material.specular, 0.9);
     assert_eq!(material.shininess, 200.0);
+    assert_eq!(material.reflectiveness, 0.0);
+    assert_eq!(material.transparency, 0.0);
+    assert_eq!(material.refractive_index, 1.0);
   }
 }

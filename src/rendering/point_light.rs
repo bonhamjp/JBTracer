@@ -1,9 +1,13 @@
+use crate::rendering::shape::Shape;
+
 use crate::rendering::Material;
 
 use crate::math::tuple::Tuple;
 use crate::math::Point;
 use crate::math::Vector;
 use crate::math::Color;
+
+use crate::math::Matrix4x4;
 
 #[derive(PartialEq)]
 pub struct PointLight {
@@ -20,8 +24,15 @@ impl PointLight {
     PointLight { intensity: Color::new(1.0, 1.0, 1.0, 1.0), position: Point::empty() }
   }
 
-  pub fn lighting(&self, material: &Material, position: &Point, eye_v: &Vector, normal: &Vector, in_shadow: bool) -> Color {
-    let effective_color = material.color.mult_color(&self.intensity);
+  pub fn lighting(&self, object: &dyn Shape, position: &Point, eye_v: &Vector, normal: &Vector, in_shadow: bool) -> Color {
+    let material = object.get_material();
+    
+    // let object_point = object.get_transform().inverse().mult_point(position);
+    // let pattern_point = material.pattern.get_transform().inverse().mult_point(&object_point);
+
+    let pattern_point = material.pattern.convert_point(object, position);
+
+    let effective_color = material.pattern.color_at(&pattern_point).mult_color(&self.intensity);
 
     // direction to light source
     let light_v = self.position.subtract_point(position).normalize();

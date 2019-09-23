@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use crate::rendering::shape::Shape;
 use crate::rendering::shape::ShapeType;
 
@@ -14,37 +12,29 @@ use crate::math::Vector;
 
 use crate::math::Matrix4x4;
 
-#[derive(PartialEq)]
-pub struct Sphere {
+pub struct Sphere<'a> {
+  pub id: u64,
   pub transform: Matrix4x4,
-  pub material: Material
+  pub material: Material<'a>
 }
 
-impl Sphere {
-  pub fn new(transform: Matrix4x4, material: Material) -> Sphere {
-    Sphere { transform: transform, material: material }
-  }
-  
-  pub fn default() -> Sphere {
-    Sphere { transform: Matrix4x4::identity(), material: Material::default() }
+impl<'a> Sphere<'a> {
+  pub fn new(id: u64, transform: Matrix4x4, material: Material<'a>) -> Sphere {
+    Sphere { id: id, transform: transform, material: material }
   }
 }
 
-impl Shape for Sphere {
+impl<'a> Shape for Sphere<'a> {
+  fn get_id(&self) -> u64 {
+    self.id
+  }
+
   fn get_transform(&self) -> &Matrix4x4 {
     &self.transform
   }
 
-  fn set_transform(&mut self, transform: Matrix4x4) {
-    self.transform = transform
-  }
-
   fn get_material(&self) -> &Material {
     &self.material
-  }
-
-  fn set_material(&mut self, material: Material) {
-    self.material = material
   }
 
   fn intersections(&self, ray: &Ray) -> Vec<Intersection> {
@@ -90,17 +80,5 @@ impl Shape for Sphere {
 
   fn get_base_type(&self) -> ShapeType {
     ShapeType::Sphere
-  }
-
-  fn as_any(&self) -> &dyn Any {
-    self
-  }
-
-  fn is_eq(&self, r_hand: &Shape) -> bool {
-    if self.get_base_type() != r_hand.get_base_type() {
-      return false;
-    } else {
-      return self as *const _ == r_hand.as_any().downcast_ref::<Sphere>().unwrap() as *const _
-    }
   }
 }

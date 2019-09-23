@@ -3,7 +3,7 @@ use num::clamp;
 
 const COLOR_RANGE: u64 = 255;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct Color {
   pub r: f64,
   pub g: f64,
@@ -30,6 +30,10 @@ impl Color {
 
   pub fn add_color(&self, r_side: &Color) -> Color {
     Color::new(self.r + r_side.r, self.g + r_side.g, self.b + r_side.b, 1.0)
+  }
+
+  pub fn subtract_color(&self, r_side: &Color) -> Color {
+    Color::new(self.r - r_side.r, self.g - r_side.g, self.b - r_side.b, 1.0)
   }
 
   pub fn divide_color(&self, r_side: &Color) -> Color {

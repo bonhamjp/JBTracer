@@ -19,16 +19,17 @@ pub enum ShapeType {
 }
 
 pub trait Shape {
-  fn get_transform(&self) -> &Matrix4x4;
-  fn set_transform(&mut self, transform: Matrix4x4);
+  fn get_id(&self) -> u64;
 
+  fn get_transform(&self) -> &Matrix4x4;
   fn get_material(&self) -> &Material;
-  fn set_material(&mut self, material: Material); 
 
   fn intersections(&self, ray: &Ray) -> Vec<Intersection>;
   fn normal_at(&self, point: &Point) -> Vector;
 
   fn get_base_type(&self) -> ShapeType;
-  fn as_any(&self) -> &dyn Any;
-  fn is_eq(&self, r_hand: &Shape) -> bool;
+  
+  fn is_eq(&self, r_hand: &Shape) -> bool {
+    self.get_id() == r_hand.get_id()
+  }
 }
