@@ -1,3 +1,4 @@
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Matrix2x2 {
   pub elements: [f64; 4]
 }

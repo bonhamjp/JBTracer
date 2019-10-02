@@ -9,10 +9,6 @@ mod tests {
 
   use crate::rendering::Material;
 
-  use crate::rendering::pattern::Pattern;
-  use crate::rendering::SolidPattern;
-  use crate::rendering::StripePattern;
-
   use crate::math::Point;
   use crate::math::Vector;
   
@@ -52,8 +48,7 @@ mod tests {
   fn lighting_with_eye_between_light_and_surface() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, -10.0));    
     
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
     
     let position = Point::empty();
@@ -72,8 +67,7 @@ mod tests {
   fn lighting_with_eye_between_light_and_surface_eye_offset_45_degrees() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, -10.0));
 
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
     
     let position = Point::empty();
@@ -92,8 +86,7 @@ mod tests {
   fn lighting_with_eye_opposite_surface_light_offset_45_degrees() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 10.0, -10.0));
     
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
 
     let position = Point::empty();
@@ -112,8 +105,7 @@ mod tests {
   fn lighting_with_eye_facing_reflection_vector() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 10.0, -10.0));
 
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
 
     let position = Point::empty();
@@ -132,8 +124,7 @@ mod tests {
   fn lighting_with_light_behind_surface() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, 10.0));
     
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
 
     let position = Point::empty();
@@ -152,8 +143,7 @@ mod tests {
   fn lighting_with_surface_in_shadow() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, -10.0));
 
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
     
     let position = Point::empty();
@@ -172,11 +162,12 @@ mod tests {
   fn lighting_object_with_pattern() {
     let point_light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, -10.0));
 
-    let pattern = &StripePattern::new(
-      Color::new(1.0, 1.0, 1.0, 1.0), 
-      Color::new(0.0, 0.0, 0.0, 1.0), Matrix4x4::identity()
+    let material = Material::striped(
+      1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 
+      Color::new(1.0, 1.0, 1.0, 1.0),
+      Color::new(0.0, 0.0, 0.0, 1.0),
+      Matrix4x4::identity()
     );
-    let material = Material::new(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, pattern);
     let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
     
     let eye_v = Vector::new(0.0, 0.0, -1.0);
@@ -205,11 +196,10 @@ mod tests {
 
   #[test]
   fn pattern_position_with_object_transformation() {
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, pattern);
-    let sphere = &Sphere::new(1, Matrix4x4::scale(2.0, 2.0, 2.0), material);
-    
-    let pattern_point = pattern.convert_point(sphere, &Point::new(2.0, 3.0, 4.0));
+    let material = Material::solid(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0),  Matrix4x4::identity());
+    let sphere = &Sphere::new(1,  Matrix4x4::scale(2.0, 2.0, 2.0), material);
+
+    let pattern_point = sphere.get_material().convert_point(sphere, &Point::new(2.0, 3.0, 4.0));
 
     assert_eq!(pattern_point.x, 1.0);
     assert_eq!(pattern_point.y, 1.5);
@@ -218,11 +208,10 @@ mod tests {
 
   #[test]
   fn lighting_pattern_with_pattern_transformation() {
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::scale(2.0, 2.0, 2.0));
-    let material = Material::new(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, pattern);
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
-    
-    let pattern_point = pattern.convert_point(sphere, &Point::new(2.0, 3.0, 4.0));
+    let material = Material::solid(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0),  Matrix4x4::scale(2.0, 2.0, 2.0));
+    let sphere = &Sphere::new(1,  Matrix4x4::identity(), material);
+
+    let pattern_point = sphere.get_material().convert_point(sphere, &Point::new(2.0, 3.0, 4.0));
 
     assert_eq!(pattern_point.x, 1.0);
     assert_eq!(pattern_point.y, 1.5);
@@ -231,11 +220,10 @@ mod tests {
 
   #[test]
   fn lighting_pattern_with_both_object_and_pattern_transformation() {
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::translate(0.5, 1.0, 1.5));
-    let material = Material::new(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::translate(0.5, 1.0, 1.5));
     let sphere = &Sphere::new(1, Matrix4x4::scale(2.0, 2.0, 2.0), material);
     
-    let pattern_point = pattern.convert_point(sphere, &Point::new(2.5, 3.0, 3.5));
+    let pattern_point = sphere.get_material().convert_point(sphere, &Point::new(2.5, 3.0, 3.5));
 
     assert_eq!(pattern_point.x, 0.75);
     assert_eq!(pattern_point.y, 0.5);

@@ -5,9 +5,6 @@ mod tests {
     
   use crate::rendering::Material;
 
-  use crate::rendering::pattern::Pattern;
-  use crate::rendering::SolidPattern;
-
   use crate::rendering::Intersection;
 
   use crate::math::tuple::Tuple;
@@ -21,27 +18,38 @@ mod tests {
   #[test]
   fn new_distance_and_object_reference() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = Sphere::new(1, transform, material);
 
-    let intersection = Intersection::new(3.5, &sphere);    
+    let intersection = Intersection::new(3.5, &sphere, Matrix4x4::identity(), Matrix4x4::identity());    
     
     assert!(sphere.is_eq(intersection.object));
   }
 
   #[test]
+  fn new_with_uv_creates_intersection_with_uv_values() {
+    let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
+    let sphere = Sphere::new(1, transform, material);
+
+    let intersection = Intersection::new_with_uv(3.5, &sphere, Matrix4x4::identity(), Matrix4x4::identity(), 2.0, 3.5);    
+    
+    assert!(sphere.is_eq(intersection.object));
+    assert_eq!(intersection.u, 2.0);
+    assert_eq!(intersection.v, 3.5);
+  }
+
+  #[test]
   fn aggregates_and_orders_intersections_from_smallest_t_to_largest() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = Sphere::new(1, transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
-    intersections.push(Intersection::new(2.0, &sphere));
-    intersections.push(Intersection::new(3.0, &sphere));
-    intersections.push(Intersection::new(1.0, &sphere));
+    intersections.push(Intersection::new(2.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(3.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(1.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
 
     let sorted_intersections = Intersection::insert_intersection(&mut Vec::new(), &mut intersections);
   
@@ -53,15 +61,14 @@ mod tests {
   #[test]
   fn hit_returns_intersection_with_smallest_t_if_all_positive() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = Sphere::new(1, transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
-    intersections.push(Intersection::new(2.0, &sphere));
-    intersections.push(Intersection::new(1.0, &sphere));
-    intersections.push(Intersection::new(3.0, &sphere));
+    intersections.push(Intersection::new(2.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(1.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(3.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
 
     let sorted_intersections = Intersection::insert_intersection(&mut Vec::new(), &mut intersections);
   
@@ -76,15 +83,14 @@ mod tests {
   #[test]
   fn hit_returns_smallest_positive_intersection_if_some_positive_and_some_negative() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = Sphere::new(1, transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
-    intersections.push(Intersection::new(2.0, &sphere));
-    intersections.push(Intersection::new(-1.0, &sphere));
-    intersections.push(Intersection::new(3.0, &sphere));
+    intersections.push(Intersection::new(2.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(-1.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(3.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
 
     let sorted_intersections = Intersection::insert_intersection(&mut Vec::new(), &mut intersections);
   
@@ -99,8 +105,7 @@ mod tests {
   #[test]
   fn hit_returns_nothing_if_no_intersections() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = Sphere::new(1, transform, material);
 
     let sorted_intersections = Intersection::insert_intersection(&mut Vec::new(), &mut Vec::new());
@@ -117,15 +122,14 @@ mod tests {
   #[test]
   fn hit_returns_nothing_if_all_intersections_negative() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = Sphere::new(1, transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
-    intersections.push(Intersection::new(-2.0, &sphere));
-    intersections.push(Intersection::new(-1.0, &sphere));
-    intersections.push(Intersection::new(-3.0, &sphere));
+    intersections.push(Intersection::new(-2.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(-1.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
+    intersections.push(Intersection::new(-3.0, &sphere, Matrix4x4::identity(), Matrix4x4::identity()));
 
     let sorted_intersections = Intersection::insert_intersection(&mut Vec::new(), &mut Vec::new());
   

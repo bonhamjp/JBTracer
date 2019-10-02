@@ -25,12 +25,21 @@ pub struct Computations<'a> {
 
 impl<'a> Computations<'a> {
   pub fn new<'b>(hit: &'b Intersection<'a>, ray: &Ray, intersections: &Vec<Intersection<'a>>) -> Computations<'a> {
-    let t = hit.t;
     let object = hit.object;
 
-    let point = ray.position(t);
+    let point = ray.position(hit.t);
     let eye_v = ray.direction.multiply(-1.0);
-    let mut normal = object.normal_at(&point);
+    
+    let container_point = hit.world_to_container.mult_point(&point);
+    
+    let mut normal;
+    if object.interpolates_normals() {
+      normal = hit.normal_to_world.mult_vector(&object.normal_at_with_uv(&container_point, hit.u, hit.v));
+    } else {
+      normal = hit.normal_to_world.mult_vector(&object.normal_at(&container_point)); 
+    }
+    normal.w = 0.0;
+    normal = normal.normalize();
 
     let mut inside = false;
 
@@ -41,10 +50,10 @@ impl<'a> Computations<'a> {
     }
 
     // Point slightly off of object surface prevents shadow precision error
-    let over_point = point.add_vector(&normal.multiply(0.0001)); // TODO: Use global epsilon 
+    let over_point = point.add_vector(&normal.multiply(0.001)); // TODO: Use global epsilon 
     
     // Point slightly under surface of object, for refraction calculations
-    let under_point = point.subtract_vector(&normal.multiply(0.0001)); // TODO: Use global epsilon
+    let under_point = point.subtract_vector(&normal.multiply(0.001)); // TODO: Use global epsilon
 
     // Refractive indices of a materials being transitioned to and from
     let (n1, n2) = calculate_refractive_indices(hit, intersections);
@@ -57,7 +66,7 @@ impl<'a> Computations<'a> {
     }
 
     Computations { 
-      t: t, 
+      t: hit.t, 
       point: point, 
       eye_v: eye_v, 
       normal: normal, 

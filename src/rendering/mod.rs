@@ -25,28 +25,34 @@ pub mod plane;
 pub mod plane_tests;
 pub use self::plane::Plane;
 
-pub mod pattern;
-pub use self::pattern::Pattern;
+pub mod cube;
+pub mod cube_tests;
+pub use self::cube::Cube;
 
-pub mod solid_pattern;
-pub mod solid_pattern_tests;
-pub use self::solid_pattern::SolidPattern;
+pub mod cylinder;
+pub mod cylinder_tests;
+pub use self::cylinder::Cylinder;
 
-pub mod stripe_pattern;
-pub mod stripe_pattern_tests;
-pub use self::stripe_pattern::StripePattern;
+pub mod cone;
+pub mod cone_tests;
+pub use self::cone::Cone;
 
-pub mod gradient_pattern;
-pub mod gradient_pattern_tests;
-pub use self::gradient_pattern::GradientPattern;
+pub mod triangle;
+pub mod triangle_tests;
+pub use self::triangle::Triangle;
 
-pub mod ring_pattern;
-pub mod ring_pattern_tests;
-pub use self::ring_pattern::RingPattern;
+pub mod smooth_triangle;
+pub mod smooth_triangle_tests;
+pub use self::smooth_triangle::SmoothTriangle;
 
-pub mod checker_pattern;
-pub mod checker_pattern_tests;
-pub use self::checker_pattern::CheckerPattern;
+pub mod constructive_geometry;
+pub mod constructive_geometry_tests;
+pub use self::constructive_geometry::ConstructiveOperation;
+pub use self::constructive_geometry::ConstructiveGeometry;
+
+pub mod container;
+pub mod container_tests;
+pub use self::container::Container;
 
 pub mod ray;
 pub mod ray_tests;
@@ -63,3 +69,8 @@ pub use self::computations::Computations;
 pub mod material;
 pub mod material_tests;
 pub use self::material::Material;
+
+pub mod obj_file_parser;
+pub mod obj_file_parser_tests;
+pub use self::obj_file_parser::ObjLineType;
+pub use self::obj_file_parser::ObjFileParser;

@@ -1,5 +1,6 @@
 use crate::math::matrix2x2::Matrix2x2;
 
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Matrix3x3 {
   pub elements: [f64; 9]
 }

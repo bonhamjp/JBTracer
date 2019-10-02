@@ -15,17 +15,29 @@ use crate::math::Vector;
 pub enum ShapeType {
   Sphere,
   Plane,
-  Cube
+  Cube,
+  Cylinder,
+  Cone,
+  Triangle,
+  SmoothTriangle,
+  ConstructiveGeometry
 }
 
 pub trait Shape {
   fn get_id(&self) -> u64;
 
   fn get_transform(&self) -> &Matrix4x4;
+  fn get_inverse(&self) -> &Matrix4x4;
+  fn get_transpose(&self) -> &Matrix4x4;
+  
   fn get_material(&self) -> &Material;
 
-  fn intersections(&self, ray: &Ray) -> Vec<Intersection>;
+  fn intersections(&self, ray: &Ray, world_to_container: Matrix4x4, normal_to_world: Matrix4x4) -> Vec<Intersection>;
+  
   fn normal_at(&self, point: &Point) -> Vector;
+  fn normal_at_with_uv(&self, point: &Point, u: f64, v: f64) -> Vector;
+
+  fn interpolates_normals(&self) -> bool;
 
   fn get_base_type(&self) -> ShapeType;
   

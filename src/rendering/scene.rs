@@ -7,7 +7,10 @@ use crate::rendering::Camera;
 use crate::rendering::PointLight;   
 
 use crate::rendering::shape::Shape;
-use crate::rendering::Sphere;
+
+use crate::rendering::ConstructiveGeometry;
+
+use crate::rendering::Container;
 
 use crate::rendering::Material;
 
@@ -28,24 +31,25 @@ const RAY_CAST_DEPTH: u32 = 8;
 pub struct Scene<'a> {
   pub camera: Camera,
   pub lights: Vec<PointLight>,
-  pub objects: Vec<&'a dyn Shape>
+  pub containers: Vec<Container<'a>>,
+  pub constructive_geometries: Vec<ConstructiveGeometry<'a>> // TODO: Implement this separately from containers
 }
 
 impl<'a> Scene<'a> {
-  pub fn new(camera: Camera, lights: Vec<PointLight>, objects: Vec<&'a dyn Shape>) -> Scene {
-    Scene { camera: camera, lights: lights, objects: objects }
-  }
-
-  pub fn empty() -> Scene<'a> {
-    let empty_camera = Camera::new(0, 0, f64::consts::PI / 2.0, Matrix4x4::identity()); 
-    Scene { camera: empty_camera, lights: Vec::new(), objects: Vec::new() }
+  pub fn new(camera: Camera, lights: Vec<PointLight>, containers: Vec<Container<'a>>) -> Scene<'a> {
+    Scene { 
+      camera: camera, 
+      lights: lights, 
+      containers: containers,
+      constructive_geometries: Vec::new()
+    }
   }
 
   pub fn intersect<'b>(&self, ray: &'b Ray) -> Vec<Intersection<'a>> {
     let mut intersections = Vec::new();
 
-    for object in &self.objects {
-      let mut new_intersections = object.intersections(&ray);
+    for container in &self.containers {
+      let mut new_intersections = container.intersect(ray);
 
       intersections = Intersection::insert_intersection(&mut intersections, &mut new_intersections);
     }
@@ -62,7 +66,6 @@ impl<'a> Scene<'a> {
 
     let intersections = self.intersect(&ray);
 
-    let hit = Intersection::get_hit(&intersections);
     if let Some(intersection) = Intersection::get_hit(&intersections) {
       return intersection.t < distance;
 
@@ -105,8 +108,6 @@ impl<'a> Scene<'a> {
 
   pub fn color_at(&self, ray: &Ray, remaining_casts: u32) -> Color {
     let intersections = self.intersect(ray);
-
-    let hit = Intersection::get_hit(&intersections);
 
     if let Some(intersection) = Intersection::get_hit(&intersections) {
       let computations = Computations::new(&intersection, &ray, &intersections);

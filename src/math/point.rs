@@ -1,7 +1,7 @@
 use crate::math::tuple::Tuple;
 use crate::math::vector::Vector;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Point {
   pub x: f64,
   pub y: f64,

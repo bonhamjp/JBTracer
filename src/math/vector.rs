@@ -1,7 +1,7 @@
 use crate::math::tuple::Tuple;
 use crate::math::point::Point;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Vector {
   pub x: f64,
   pub y: f64,
@@ -63,7 +63,12 @@ impl Vector {
   pub fn normalize(&self) -> Vector {
     let magnitude = self.magnitude();
 
-    Vector::new(self.x / magnitude, self.y / magnitude, self.z / magnitude)
+    // Prevent divide by zero error
+    if magnitude.abs() < 0.0001 {
+      return Vector::new(0.0, 0.0, 0.0);
+    } else {
+      return Vector::new(self.x / magnitude, self.y / magnitude, self.z / magnitude);
+    }
   }
 
   pub fn cross(&self, r_hand: &Vector) -> Vector {

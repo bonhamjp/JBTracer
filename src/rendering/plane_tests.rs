@@ -10,9 +10,6 @@ mod tests {
   
   use crate::rendering::Material;
 
-  use crate::rendering::pattern::Pattern;
-  use crate::rendering::SolidPattern;
-
   use crate::math::tuple::Tuple;
   use crate::math::Point;
   use crate::math::Vector;
@@ -24,8 +21,7 @@ mod tests {
   #[test]
   fn plane_created_with_transform_and_material() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = Plane::new(1, transform, material);
 
     assert!(plane.transform == Matrix4x4::translate(5.0, -3.0, 2.0));
@@ -38,8 +34,7 @@ mod tests {
   #[test]
   fn normal_of_plane_is_constant() {
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = Plane::new(1, transform, material);
 
     let normal_1 = plane.normal_at(&Point::new(0.0, 0.0, 0.0));
@@ -56,13 +51,12 @@ mod tests {
   #[test]
   fn ray_does_not_intersect_plane_if_parallel() {
    let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = Plane::new(1, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, 10.0, 10.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let intersections = plane.intersections(&ray);
+    let intersections = plane.intersections(&ray, Matrix4x4::identity(), Matrix4x4::identity());
 
     assert_eq!(intersections.len(), 0);
   }
@@ -70,13 +64,12 @@ mod tests {
   #[test]
   fn ray_does_not_intersect_plane_if_coplanar() {
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = Plane::new(1, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let intersections = plane.intersections(&ray);
+    let intersections = plane.intersections(&ray, Matrix4x4::identity(), Matrix4x4::identity());
 
     assert_eq!(intersections.len(), 0);
   }
@@ -84,13 +77,12 @@ mod tests {
   #[test]
   fn ray_intersects_plane_from_above() {
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = Plane::new(1, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, 1.0, 0.0), &Vector::new(0.0, -1.0, 0.0));
 
-    let intersections = plane.intersections(&ray);
+    let intersections = plane.intersections(&ray, Matrix4x4::identity(), Matrix4x4::identity());
 
     assert_eq!(intersections.len(), 1);
     assert_eq!(intersections[0].t, 1.0);
@@ -100,13 +92,12 @@ mod tests {
   #[test]
   fn ray_intersects_plane_from_below() {
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = Plane::new(1, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, -1.0, 0.0), &Vector::new(0.0, 1.0, 0.0));
 
-    let intersections = plane.intersections(&ray);
+    let intersections = plane.intersections(&ray, Matrix4x4::identity(), Matrix4x4::identity());
 
     assert_eq!(intersections.len(), 1);
     assert_eq!(intersections[0].t, 1.0);

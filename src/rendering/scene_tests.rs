@@ -14,10 +14,9 @@ mod tests {
   use crate::rendering::Sphere;
   use crate::rendering::Plane;
 
-  use crate::rendering::Material;
+  use crate::rendering::Container;
 
-  use crate::rendering::pattern::Pattern;
-  use crate::rendering::SolidPattern;
+  use crate::rendering::Material;
 
   use crate::rendering::Ray;
   use crate::rendering::Intersection;
@@ -32,32 +31,22 @@ mod tests {
   use crate::math::Matrix4x4;
 
   #[test]
-  fn empty_scene_contains_no_lights_or_objects() {
-    let scene = Scene::empty();
-
-    assert!(scene.lights.len() == 0);
-    assert!(scene.objects.len() == 0);
-  }
-
-  #[test]
   fn creating_scene_with_lights_and_objects() {
     let camera = Camera::new(200, 100, f64::consts::PI / 2.0, Matrix4x4::identity());
     
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![PointLight::default()], 
-      vec![sphere as &dyn Shape]
-    );
+    let container_objects = vec![sphere as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![PointLight::default()], vec![container]);
 
     assert!(scene.lights.len() == 1);
     assert!(scene.lights[0] == PointLight::default());
-    assert!(scene.objects.len() == 1);
-    assert!((scene.objects[0] as &dyn Shape).is_eq(sphere as &dyn Shape));
+    assert!(scene.containers.len() == 1);
+    assert!((scene.containers[0].shapes[0] as &dyn Shape).is_eq(sphere as &dyn Shape));
   }
 
   #[test]
@@ -67,20 +56,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -100,24 +86,21 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(4.0, scene.objects[0]);
+    let mut intersection = Intersection::new(4.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -138,24 +121,21 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.25, 0.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(0.5, scene.objects[1]);
+    let mut intersection = Intersection::new(0.5, scene.containers[0].shapes[1], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -176,20 +156,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 1.0, 0.0));
 
@@ -208,20 +185,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -240,20 +214,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.1, 0.1, 100.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(1.0, 0.1, 0.1, 100.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.75), &Vector::new(0.0, 0.0, -1.0));
 
@@ -276,20 +247,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let canvas = scene.render();
 
@@ -308,20 +276,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let point = Point::new(0.0, 10.0, 0.0);
 
@@ -335,20 +300,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let point = Point::new(10.0, -10.0, 10.0);
 
@@ -362,20 +324,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let point = Point::new(-20.0, 20.0, -20.0);
 
@@ -389,20 +348,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0)); 
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let point = Point::new(-2.0, 2.0, -2.0);
 
@@ -416,24 +372,21 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 5.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(4.0, scene.objects[1]);
+    let mut intersection = Intersection::new(4.0, scene.containers[0].shapes[1], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -454,24 +407,21 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
+    
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(1.0, scene.objects[0]);
+    let mut intersection = Intersection::new(1.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -492,29 +442,25 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.5, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.5, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = &Plane::new(3, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, plane as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, plane as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -3.0), &Vector::new(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0));
 
-    let mut intersection = Intersection::new((2.0 as f64).sqrt(), scene.objects[2]);
+    let mut intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[2], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -522,9 +468,9 @@ mod tests {
 
     let reflected_color = scene.reflected_color(&computations, 4);
     
-    assert_eq!(reflected_color.r, 0.19034783498676097);
-    assert_eq!(reflected_color.g, 0.23793479373345122);
-    assert_eq!(reflected_color.b, 0.14276087624007072);
+    assert_eq!(reflected_color.r, 0.19050298661014994);
+    assert_eq!(reflected_color.g, 0.2381287332626874);
+    assert_eq!(reflected_color.b, 0.14287723995761248);
     assert_eq!(reflected_color.a, 1.0);
   }
 
@@ -535,29 +481,25 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.5, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.5, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = &Plane::new(3, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, plane as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, plane as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -3.0), &Vector::new(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0));
 
-    let mut intersection = Intersection::new((2.0 as f64).sqrt(), scene.objects[2]);
+    let mut intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[2], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -565,9 +507,9 @@ mod tests {
 
     let shaded_color = scene.shade_hit(&computations, 4);
     
-    assert_eq!(shaded_color.r, 0.8767732239682624);
-    assert_eq!(shaded_color.g, 0.9243601827149526 );
-    assert_eq!(shaded_color.b, 0.8291862652215721);
+    assert_eq!(shaded_color.r, 0.8769283755916514);
+    assert_eq!(shaded_color.g, 0.9245541222441889);
+    assert_eq!(shaded_color.b, 0.8293026289391139);
     assert_eq!(shaded_color.a, 1.0);
   }
 
@@ -578,20 +520,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, 0.0));
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 1.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 1.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane_1 = &Plane::new(1, transform, material);
 
     let transform = Matrix4x4::translate(0.0, 1.0, 0.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 1.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 1.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane_2 = &Plane::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![plane_1 as &dyn Shape, plane_2 as &dyn Shape]
-    );
+    let container_objects = vec![plane_1 as &dyn Shape, plane_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 1.0, 0.0));
 
@@ -605,19 +544,17 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(0.0, 0.0, 0.0));
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.5, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.5, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = &Plane::new(1, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![plane as &dyn Shape]
-    );
+    let container_objects = vec![plane as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -3.0), &Vector::new(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0));
 
-    let intersection = Intersection::new((2.0 as f64).sqrt(), scene.objects[0]);
+    let intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -638,26 +575,23 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.8, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
+    
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
     let mut intersections = Vec::new();
-    let intersection_1 = Intersection::new(4.0, scene.objects[0]);
-    let intersection_2 = Intersection::new(6.0, scene.objects[0]);
+    let intersection_1 = Intersection::new(4.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new(6.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection_1);
     intersections.push(intersection_2);
 
@@ -678,26 +612,23 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.8, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
     let mut intersections = Vec::new();
-    let intersection_1 = Intersection::new(4.0, scene.objects[0]);
-    let intersection_2 = Intersection::new(6.0, scene.objects[0]);
+    let intersection_1 = Intersection::new(4.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new(6.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection_1);
     intersections.push(intersection_2);
     
@@ -718,26 +649,23 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.8, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, (2.0 as f64).sqrt() / 2.0), &Vector::new(0.0, 1.0, 0.0));
 
     let mut intersections = Vec::new();
-    let intersection_1 = Intersection::new(-(2.0 as f64).sqrt() / 2.0, scene.objects[0]);
-    let intersection_2 = Intersection::new((2.0 as f64).sqrt() / 2.0, scene.objects[0]);
+    let intersection_1 = Intersection::new(-(2.0 as f64).sqrt() / 2.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new((2.0 as f64).sqrt() / 2.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection_1);
     intersections.push(intersection_2);
     
@@ -758,21 +686,19 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, pattern);
+    let material = Material::solid(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere as &dyn Shape]
-    );
+    let container_objects = vec![sphere as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, (2.0 as f64).sqrt() / 2.0), &Vector::new(0.0, 1.0, 0.0));
 
     let mut intersections = Vec::new();
-    let intersection_1 = Intersection::new(-(2.0 as f64).sqrt() / 2.0, scene.objects[0]);
-    let intersection_2 = Intersection::new((2.0 as f64).sqrt() / 2.0, scene.objects[0]);
+    let intersection_1 = Intersection::new(-(2.0 as f64).sqrt() / 2.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new((2.0 as f64).sqrt() / 2.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection_1);
     intersections.push(intersection_2);
     
@@ -790,21 +716,19 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, pattern);
+    let material = Material::solid(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere as &dyn Shape]
-    );
+    let container_objects = vec![sphere as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 1.0, 0.0));
 
     let mut intersections = Vec::new();
-    let intersection_1 = Intersection::new(-1.0, scene.objects[0]);
-    let intersection_2 = Intersection::new(1.0, scene.objects[0]);
+    let intersection_1 = Intersection::new(-1.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new(1.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection_1);
     intersections.push(intersection_2);
     
@@ -822,20 +746,18 @@ mod tests {
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
 
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, pattern);
+    let material = Material::solid(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere = &Sphere::new(1, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![sphere as &dyn Shape]
-    );
+    let container_objects = vec![sphere as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(&Point::new(0.0, 0.99, -2.0), &Vector::new(0.0, 0.0, 1.0));
 
     let mut intersections = Vec::new();
-    let intersection = Intersection::new(1.8589, scene.objects[0]);
+    let intersection = Intersection::new(1.8589, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection);
     
     let computations = Computations::new(&intersections[0], &ray, &intersections);
@@ -850,37 +772,27 @@ mod tests {
     let camera = Camera::new(200, 100, f64::consts::PI / 2.0, Matrix4x4::identity());
 
     let light = PointLight::new(Color::new(1.0, 1.0, 1.0, 1.0), Point::new(-10.0, 10.0, -10.0));
-
+    
     let transform = Matrix4x4::identity();
-    let pattern = &SolidPattern::new(Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
     let sphere_1 = &Sphere::new(1, transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let sphere_2 = &Sphere::new(2, transform, material);
 
     let transform = Matrix4x4::translate(0.0, -3.5, -0.5);
-    let pattern = &SolidPattern::new(Color::new(1.0, 0.0, 0.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.5, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, pattern);
+    let material = Material::solid(0.5, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 0.0, 0.0, 1.0), Matrix4x4::identity());
     let sphere_3 = &Sphere::new(3, transform, material);
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
-    let pattern = &SolidPattern::new(Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let material = Material::new(0.1, 0.9, 0.9, 200.0, 0.5, 0.5, 1.5, pattern);
+    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.5, 0.5, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let plane = &Plane::new(4, transform, material);
 
-    let scene = Scene::new(
-      camera, 
-      vec![light], 
-      vec![
-        sphere_1 as &dyn Shape, 
-        sphere_2 as &dyn Shape, 
-        sphere_3 as &dyn Shape, 
-        plane as &dyn Shape
-      ]
-    );
+    let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, sphere_3 as &dyn Shape, plane as &dyn Shape];
+    let container = Container::new(Matrix4x4::identity(), container_objects);
+
+    let scene = Scene::new(camera, vec![light], vec![container]);
 
     let ray = Ray::new(
       &Point::new(0.0, 0.0, -3.0), 
@@ -888,16 +800,16 @@ mod tests {
     );
 
     let mut intersections = Vec::new();
-    let intersection = Intersection::new((2.0 as f64).sqrt(), scene.objects[3]);
+    let intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[3], Matrix4x4::identity(), Matrix4x4::identity());
     intersections.push(intersection);
     
     let computations = Computations::new(&intersections[0], &ray, &intersections);
     
     let shaded_color = scene.shade_hit(&computations, 4);
 
-    assert_eq!(shaded_color.r, 0.9339158657590994);
-    assert_eq!(shaded_color.g, 0.6964351328048651);
-    assert_eq!(shaded_color.b, 0.6924312352755196);
+    assert_eq!(shaded_color.r, 0.9339223928751195);
+    assert_eq!(shaded_color.g, 0.6964432916998902);
+    assert_eq!(shaded_color.b, 0.6924361306125347);
     assert_eq!(shaded_color.a, 1.0);
   }
 }

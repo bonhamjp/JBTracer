@@ -7,7 +7,7 @@ use crate::math::Vector;
 // TODO: Declare this delta value somewhere global
 const ROUNDING_DELTA: f64 = 0.0001;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Matrix4x4 {
   pub elements: [f64; 16]
 }
