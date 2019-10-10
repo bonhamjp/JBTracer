@@ -1,25 +1,21 @@
 #[cfg(test)]
 mod tests {
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Sphere;
+  use crate::rendering::math::Color;
+
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Sphere;
     
   use crate::rendering::Material;
 
   use crate::rendering::Intersection;
 
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
-
   #[test]
   fn new_distance_and_object_reference() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
+    let sphere = Sphere::new(transform, material);
 
     let intersection = Intersection::new(3.5, &sphere, Matrix4x4::identity(), Matrix4x4::identity());    
     
@@ -30,7 +26,7 @@ mod tests {
   fn new_with_uv_creates_intersection_with_uv_values() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
+    let sphere = Sphere::new(transform, material);
 
     let intersection = Intersection::new_with_uv(3.5, &sphere, Matrix4x4::identity(), Matrix4x4::identity(), 2.0, 3.5);    
     
@@ -43,7 +39,7 @@ mod tests {
   fn aggregates_and_orders_intersections_from_smallest_t_to_largest() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
+    let sphere = Sphere::new(transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
@@ -62,7 +58,7 @@ mod tests {
   fn hit_returns_intersection_with_smallest_t_if_all_positive() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
+    let sphere = Sphere::new(transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
@@ -84,7 +80,7 @@ mod tests {
   fn hit_returns_smallest_positive_intersection_if_some_positive_and_some_negative() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
+    let sphere = Sphere::new(transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
@@ -104,15 +100,11 @@ mod tests {
 
   #[test]
   fn hit_returns_nothing_if_no_intersections() {
-    let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
-    let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
-
     let sorted_intersections = Intersection::insert_intersection(&mut Vec::new(), &mut Vec::new());
   
     match Intersection::get_hit(&sorted_intersections) {
       // something wrong if no hit
-      Some(hit) => assert!(1 == 1),
+      Some(_hit) => assert!(1 == 1),
       
       // nothing found, which is expected
       None => assert!(1 == 1)
@@ -123,7 +115,7 @@ mod tests {
   fn hit_returns_nothing_if_all_intersections_negative() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, transform, material);
+    let sphere = Sphere::new(transform, material);
 
     let mut intersections: Vec<Intersection> = Vec::new();
 
@@ -135,7 +127,7 @@ mod tests {
   
     match Intersection::get_hit(&sorted_intersections) {
       // something wrong if no hit
-      Some(hit) => assert!(1 == 1),
+      Some(_hit) => assert!(1 == 1),
       
       // nothing found, which is expected
       None => assert!(1 == 1)

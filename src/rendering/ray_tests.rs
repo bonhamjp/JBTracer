@@ -1,12 +1,12 @@
 #[cfg(test)]
 mod tests {
+  use crate::rendering::math::tuple::Tuple;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
+
+  use crate::rendering::math::Matrix4x4;
+  
   use crate::rendering::Ray;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn new_sets_values() {
@@ -64,7 +64,7 @@ mod tests {
 
   #[test]
   fn translating_ray() {
-    let mut ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(0.0, 1.0, 0.0));
+    let ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(0.0, 1.0, 0.0));
 
     let translation = Matrix4x4::translate(3.0, 4.0, 5.0);
 
@@ -76,7 +76,7 @@ mod tests {
 
   #[test]
   fn scaling_ray() {
-    let mut ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(0.0, 1.0, 0.0));
+    let ray = Ray::new(&Point::new(1.0, 2.0, 3.0), &Vector::new(0.0, 1.0, 0.0));
 
     let scale = Matrix4x4::scale(2.0, 3.0, 4.0);
 

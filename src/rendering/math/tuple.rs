@@ -24,7 +24,6 @@ pub trait Tuple {
   fn internal_divide(&self, r_hand: f64) -> (f64, f64, f64) {
     let (l_hand_x, l_hand_y, l_hand_z, _) = self.get_quad();
     
-    // TODO: Prevent divide by 0
     (l_hand_x / r_hand, l_hand_y / r_hand, l_hand_z / r_hand)
   }
 

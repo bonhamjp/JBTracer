@@ -2,20 +2,9 @@ use std::io::prelude::*;
 use std::fs::File;
 
 extern crate chrono;
-use chrono::{Datelike, Timelike, Utc};
+use chrono::Utc;
 
-use crate::rendering::shape::Shape;
-use crate::rendering::Sphere;
-
-use crate::rendering::PointLight;
-
-use crate::rendering::Ray;
-use crate::rendering::Intersection;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-use crate::math::Color;
+use crate::rendering::math::Color;
 
 const MAX_PPM_LINE_WIDTH: usize = 70; 
 const CLEAR_COLOR: f64 = 1.0;
@@ -31,7 +20,7 @@ impl Canvas {
     let mut color_buffer: Vec<Color> = Vec::new();
 
     let buffer_size = width * height;
-    for i in 0..buffer_size {
+    for _i in 0..buffer_size {
       let color = Color::new(CLEAR_COLOR, CLEAR_COLOR, CLEAR_COLOR, 1.0);
       color_buffer.push(color);
     }
@@ -40,7 +29,6 @@ impl Canvas {
   }
 
   pub fn color_pixel(&mut self, row: u64, column: u64, color: Color) {
-    // TODO: Bounds checking
     self.color_buffer[((row * self.width) + column) as usize] = color
   }
 
@@ -65,7 +53,7 @@ impl Canvas {
         let (display_r, display_g, display_b, _) = self.pixel_color(y, x).display_values();
 
         let r_string = &format!("{} ", display_r).to_string();
-        if (color_row.chars().count() + r_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH) {
+        if color_row.chars().count() + r_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH {
           color_row.push_str("\n");
           image_data_lines.push(color_row);
 
@@ -74,7 +62,7 @@ impl Canvas {
         color_row.push_str(r_string);
 
         let g_string = &format!("{} ", display_g).to_string();
-        if (color_row.chars().count() + g_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH) {
+        if color_row.chars().count() + g_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH {
           color_row.push_str("\n");
           image_data_lines.push(color_row);
 
@@ -83,7 +71,7 @@ impl Canvas {
         color_row.push_str(g_string);
 
         let b_string = &format!("{} ", display_b).to_string();
-        if (color_row.chars().count() + b_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH) {
+        if color_row.chars().count() + b_string.chars().count() + 1 > MAX_PPM_LINE_WIDTH {
           color_row.push_str("\n");
           image_data_lines.push(color_row);
 
@@ -110,7 +98,7 @@ impl Canvas {
     let mut file = File::create(file_name).unwrap();
 
     for data_line in &self.image_output() {
-      file.write_all(data_line.as_bytes());
+      file.write_all(data_line.as_bytes()).expect("Pixels written to output");
     }
 
     Ok(())

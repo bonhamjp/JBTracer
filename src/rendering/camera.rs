@@ -1,10 +1,8 @@
+use crate::rendering::math::Point;
+
+use crate::rendering::math::Matrix4x4;
+
 use crate::rendering::Ray;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
 
 pub struct Camera {
   pub horizontal_size: u64,

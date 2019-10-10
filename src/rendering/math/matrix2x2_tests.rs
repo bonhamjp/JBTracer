@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-  use crate::math::Matrix2x2;
+  use crate::rendering::math::Matrix2x2;
 
   #[test]
   fn new_sets_values() {

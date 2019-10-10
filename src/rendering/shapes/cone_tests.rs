@@ -2,27 +2,26 @@
 mod tests {
   use std::f64;
 
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Cone;
+  use crate::rendering::math::tuple::Tuple;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
+  
+  use crate::rendering::math::Color;
+
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Cone;
 
   use crate::rendering::Ray;
-  use crate::rendering::Intersection;
   
   use crate::rendering::Material;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-  
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn cone_created_with_transform_and_material() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cone = Cone::new(1, transform, false, 10.0, 20.0, material);
+    let cone = Cone::new(transform, false, 10.0, 20.0, material);
 
     assert!(cone.transform == Matrix4x4::translate(5.0, -3.0, 2.0));
     assert!(cone.capped == false);
@@ -38,7 +37,7 @@ mod tests {
   fn ray_intersects_cone() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cone = Cone::new(1, transform, false, -9999999.9, 9999999.9, material);
+    let cone = Cone::new(transform, false, -9999999.9, 9999999.9, material);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -69,7 +68,7 @@ mod tests {
   fn ray_intersects_cone_parallel_to_a_half() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cone = Cone::new(1, transform, false, -9999999.9, 9999999.9, material);
+    let cone = Cone::new(transform, false, -9999999.9, 9999999.9, material);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -1.0), &Vector::new(0.0, 1.0, 1.0).normalize());
 
@@ -83,7 +82,7 @@ mod tests {
   fn ray_intersects_cone_caps() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cone = Cone::new(1, transform, true, -0.5, 0.5, material);
+    let cone = Cone::new(transform, true, -0.5, 0.5, material);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 1.0, 0.0));
 
@@ -108,7 +107,7 @@ mod tests {
   fn normal_on_cone() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cone = Cone::new(1, transform, true, -1.0, 1.0, material);
+    let cone = Cone::new(transform, true, -1.0, 1.0, material);
 
     let normal = cone.normal_at(&Point::new(0.0, 0.0, 0.0));
 

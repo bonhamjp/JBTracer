@@ -1,16 +1,16 @@
-use crate::rendering::shape::Shape;
-use crate::rendering::shape::ShapeType;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
+
+use crate::rendering::math::Matrix4x4;
+
+use crate::rendering::shapes::shape::Shape;
+use crate::rendering::shapes::shape::ShapeType;
+use crate::rendering::shapes::shape::generate_shape_id;
 
 use crate::rendering::Material;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
 
 pub struct Cylinder {
   pub id: u64,
@@ -24,11 +24,11 @@ pub struct Cylinder {
 }
 
 impl Cylinder {
-  pub fn new(id: u64, transform: Matrix4x4, capped: bool, minimum: f64, maximum: f64, material: Material) -> Cylinder {
+  pub fn new(transform: Matrix4x4, capped: bool, minimum: f64, maximum: f64, material: Material) -> Cylinder {
     let tmp_inverse = transform.inverse();
     
     Cylinder { 
-      id: id, 
+      id: generate_shape_id(), 
       transform: transform,
       inverse: tmp_inverse,
       transpose: tmp_inverse.transpose(),
@@ -79,7 +79,7 @@ impl Shape for Cylinder {
     let a = transformed_ray.direction.x * transformed_ray.direction.x + transformed_ray.direction.z * transformed_ray.direction.z;
 
     // Ray is parallel to y axis if a is zero, so no collisions
-    if !self.capped && a.abs() < 0.0001 { // TODO: Use global epsilon 
+    if !self.capped && a.abs() < 0.0001 { 
       return intersections;
     }
 
@@ -149,14 +149,10 @@ impl Shape for Cylinder {
       object_normal = Vector::new(object_point.x, 0.0, object_point.z).normalize();
     }
 
-    let mut transformed_normal = self.transpose.mult_vector(&object_normal).normalize();
-    // transformed_normal.w = 0.0;
-    // transformed_normal.normalize();
-
-    transformed_normal 
+    self.transpose.mult_vector(&object_normal).normalize()
   }
 
-  fn normal_at_with_uv(&self, point: &Point, u: f64, v: f64) -> Vector {
+  fn normal_at_with_uv(&self, _point: &Point, _u: f64, _v: f64) -> Vector {
     // Not defined
     Vector::new(0.0, 0.0, 0.0)     
   }

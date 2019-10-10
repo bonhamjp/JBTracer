@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-  use crate::math::Color;
+  use crate::rendering::math::Color;
 
   #[test]
   fn new_sets_values() {

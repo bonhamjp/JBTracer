@@ -1,10 +1,9 @@
-use crate::math::matrix3x3::Matrix3x3;
+use crate::rendering::math::matrix3x3::Matrix3x3;
 
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
+use crate::rendering::math::tuple::Tuple;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
 
-// TODO: Declare this delta value somewhere global
 const ROUNDING_DELTA: f64 = 0.0001;
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -156,13 +155,13 @@ impl Matrix4x4 {
 
   // convenience methods
   pub fn mult_point(&self, r_hand: &Point) -> Point {
-    let (new_x, new_y, new_z, new_w) = self.mult4x1(r_hand);
+    let (new_x, new_y, new_z, _new_w) = self.mult4x1(r_hand);
 
     Point::new(new_x, new_y, new_z)
   }
 
   pub fn mult_vector(&self, r_hand: &Vector) -> Vector {
-    let (new_x, new_y, new_z, new_w) = self.mult4x1(r_hand);
+    let (new_x, new_y, new_z, _new_w) = self.mult4x1(r_hand);
 
     Vector::new(new_x, new_y, new_z)
   }
@@ -198,7 +197,7 @@ impl Matrix4x4 {
     for i in 0..4 {
       for j in 0..4 {
         // gather elements from everywhere but row and column from arguments
-        if (i != row && j != column) {
+        if i != row && j != column {
           submatrix_elements[current_element_index] = self.element(i, j);
 
           current_element_index += 1;
@@ -245,8 +244,6 @@ impl Matrix4x4 {
     Matrix4x4 { elements: inverted_elements }
   }
 
-  // TODO: Move these somewhere else?
-  
   pub fn translate(x_translate: f64, y_translate: f64, z_translate: f64) -> Matrix4x4 {
     let mut matrix = Matrix4x4::identity();
 
@@ -268,8 +265,6 @@ impl Matrix4x4 {
 
     matrix
   }
-
-  // TODO: Implement rotation around arbitrary axis
 
   pub fn rotate_x(radians: f64) -> Matrix4x4 {
     let mut matrix = Matrix4x4::identity();

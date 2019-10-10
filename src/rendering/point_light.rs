@@ -1,13 +1,9 @@
-use crate::rendering::shape::Shape;
+use crate::rendering::math::tuple::Tuple;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
+use crate::rendering::math::Color;
 
-use crate::rendering::Material;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-use crate::math::Color;
-
-use crate::math::Matrix4x4;
+use crate::rendering::shapes::shape::Shape;
 
 #[derive(PartialEq)]
 pub struct PointLight {

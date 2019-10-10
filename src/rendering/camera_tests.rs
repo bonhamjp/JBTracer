@@ -2,13 +2,9 @@
 mod tests {
   use std::f64;
 
+  use crate::rendering::math::Matrix4x4;
+
   use crate::rendering::Camera;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn camera_is_created_with_specified_dimensions_and_fov() {

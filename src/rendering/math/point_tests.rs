@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
+  use crate::rendering::math::tuple::Tuple;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
 
   #[test]
   fn new_sets_values() {

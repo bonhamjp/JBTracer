@@ -1,22 +1,19 @@
 #[cfg(test)]
 mod tests {
-  use std::f64;
+  use crate::rendering::math::tuple::Tuple;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
+  
+  use crate::rendering::math::Color;
 
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Triangle;
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Triangle;
 
   use crate::rendering::Ray;
-  use crate::rendering::Intersection;
   
   use crate::rendering::Material;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-  
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn triangle_created_with_points_transform_and_material() {
@@ -26,7 +23,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     assert!(triangle.transform == Matrix4x4::translate(5.0, -3.0, 2.0));
     assert!(triangle.point_1.get_quad() == Point::new(0.0, 1.0, 0.0).get_quad());
@@ -49,7 +46,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     let normal = triangle.normal_at(&Point::new(0.0, 0.5, 0.0));
 
@@ -72,7 +69,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, -1.0, -2.0), &Vector::new(0.0, 1.0, 0.0));
 
@@ -89,7 +86,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     let ray = Ray::new(&Point::new(1.0, 1.0, -2.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -106,7 +103,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     let ray = Ray::new(&Point::new(-1.0, 1.0, -2.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -123,7 +120,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, -1.0, -2.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -140,7 +137,7 @@ mod tests {
     let point_1 = Point::new(0.0, 1.0, 0.0);
     let point_2 = Point::new(-1.0, 0.0, 0.0);
     let point_3 = Point::new(1.0, 0.0, 0.0);
-    let triangle = Triangle::new(1, point_1, point_2, point_3, transform, material);
+    let triangle = Triangle::new(point_1, point_2, point_3, transform, material);
 
     let ray = Ray::new(&Point::new(0.0, 0.5, -2.0), &Vector::new(0.0, 0.0, 1.0));
 

@@ -1,28 +1,25 @@
 #[cfg(test)]
 mod tests {
-  use std::f64;
+  use crate::rendering::math::tuple::Tuple;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
+  
+  use crate::rendering::math::Color;
 
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Cube;
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Cube;
 
   use crate::rendering::Ray;
-  use crate::rendering::Intersection;
   
   use crate::rendering::Material;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-  
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn cube_created_with_transform_and_material() {
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(1, transform, material);
+    let cube = Cube::new(transform, material);
 
     assert!(cube.transform == Matrix4x4::translate(5.0, -3.0, 2.0));
     assert!(cube.material.ambient == 0.1);
@@ -35,7 +32,7 @@ mod tests {
   fn ray_misses_cube() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(1, transform, material);
+    let cube = Cube::new(transform, material);
 
     let ray = Ray::new(&Point::new(-2.0, 0.0, 0.0), &Vector::new(0.2673, 0.5345, 0.8018));
 
@@ -78,7 +75,7 @@ mod tests {
   fn ray_intersects_cube() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(1, transform, material);
+    let cube = Cube::new(transform, material);
 
     let ray = Ray::new(&Point::new(5.0, 0.5, 0.0), &Vector::new(-1.0, 0.0, 0.0));
 
@@ -141,7 +138,7 @@ mod tests {
   fn normal_on_cube() {
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(1, transform, material);
+    let cube = Cube::new(transform, material);
 
     let normal = cube.normal_at(&Point::new(1.0, 0.5, -0.8));
 

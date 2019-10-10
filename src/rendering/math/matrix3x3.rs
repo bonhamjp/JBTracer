@@ -1,4 +1,4 @@
-use crate::math::matrix2x2::Matrix2x2;
+use crate::rendering::math::matrix2x2::Matrix2x2;
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Matrix3x3 {
@@ -68,7 +68,7 @@ impl Matrix3x3 {
     for i in 0..3 {
       for j in 0..3 {
         // gather elements from everywhere but row and column from arguments
-        if (i != row && j != column) {
+        if i != row && j != column {
           submatrix_elements[current_element_index] = self.element(i, j);
 
           current_element_index += 1;

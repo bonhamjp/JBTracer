@@ -1,18 +1,16 @@
-use std::any::Any;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
 
-use crate::rendering::shape::Shape;
-use crate::rendering::shape::ShapeType;
+use crate::rendering::math::Matrix4x4;
+
+use crate::rendering::shapes::shape::Shape;
+use crate::rendering::shapes::shape::ShapeType;
+use crate::rendering::shapes::shape::generate_shape_id;
 
 use crate::rendering::Material;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
 
 pub struct Plane {
   pub id: u64,
@@ -23,11 +21,11 @@ pub struct Plane {
 }
 
 impl Plane {
-  pub fn new(id: u64, transform: Matrix4x4, material: Material) -> Plane {
+  pub fn new(transform: Matrix4x4, material: Material) -> Plane {
     let tmp_inverse = transform.inverse();
 
     Plane { 
-      id: id, 
+      id: generate_shape_id(), 
       transform: transform,
       inverse: tmp_inverse,
       transpose: tmp_inverse.transpose(),
@@ -65,7 +63,6 @@ impl Shape for Plane {
 
     let mut intersections: Vec<Intersection> = Vec::new();
     
-    // TODO: Use global epsilon value
     // Ray parallel to plane 
     if transformed_ray.direction.y.abs() < 0.0001 {
       return intersections;
@@ -76,17 +73,13 @@ impl Shape for Plane {
     intersections
   }
 
-  fn normal_at(&self, point: &Point) -> Vector {
+  fn normal_at(&self, _point: &Point) -> Vector {
     let object_normal = Vector::new(0.0, 1.0, 0.0);
     
-    let mut transformed_normal = self.transpose.mult_vector(&object_normal).normalize();
-    // transformed_normal.w = 0.0;
-    // transformed_normal.normalize();
-
-    transformed_normal
+    self.transpose.mult_vector(&object_normal).normalize()
   }
 
-  fn normal_at_with_uv(&self, point: &Point, u: f64, v: f64) -> Vector {
+  fn normal_at_with_uv(&self, _point: &Point, _u: f64, _v: f64) -> Vector {
     // Not defined
     Vector::new(0.0, 0.0, 0.0)     
   }

@@ -1,16 +1,15 @@
-use crate::rendering::shape::Shape;
-use crate::rendering::shape::ShapeType;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
+
+use crate::rendering::math::Matrix4x4;
+
+use crate::rendering::shapes::shape::Shape;
+use crate::rendering::shapes::shape::ShapeType;
 
 use crate::rendering::Material;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
 
 #[derive(PartialEq)]
 pub enum ConstructiveOperation {
@@ -63,17 +62,15 @@ impl<'a> ConstructiveGeometry<'a> {
   pub fn filter_intersections(&self, intersection_list: Vec<Intersection<'a>>) -> Vec<Intersection<'a>> {
     let mut filtered_intersection = Vec::new();
 
-    let mut l_hit = false;
+    let mut l_hit: bool;
     let mut in_l = false;
     let mut in_r = false;
 
     // Consume intersections
     for intersection in intersection_list {
-      // TODO: Implement a better way of checking object identity
       l_hit = intersection.object.is_eq(self.left_side);
 
       if self.intersection_allowed(l_hit, in_l, in_r) {
-        // println!("HIT!!!");
         filtered_intersection.push(intersection);
       }
 
@@ -110,25 +107,20 @@ impl<'a> Shape for ConstructiveGeometry<'a> {
     &self.material
   }
 
-  fn intersections(&self, ray: &Ray, world_to_container: Matrix4x4, normal_to_world: Matrix4x4) -> Vec<Intersection> {
-    let transformed_point = self.inverse.mult_point(&ray.origin);
-    let transformed_vector = self.inverse.mult_vector(&ray.direction);
-
-    let transformed_ray = Ray::new(&transformed_point, &transformed_vector);
-
+  fn intersections(&self, ray: &Ray, _world_to_container: Matrix4x4, _normal_to_world: Matrix4x4) -> Vec<Intersection> {
     let mut left_intersections = self.left_side.intersections(ray, self.inverse, self.transpose);
     let mut right_intersections = self.right_side.intersections(ray, self.inverse, self.transpose);
 
-    let mut sorted_intersections = Intersection::insert_intersection(&mut left_intersections, &mut right_intersections);
+    let sorted_intersections = Intersection::insert_intersection(&mut left_intersections, &mut right_intersections);
 
     self.filter_intersections(sorted_intersections)
   }
 
-  fn normal_at(&self, point: &Point) -> Vector {
+  fn normal_at(&self, _point: &Point) -> Vector {
     Vector::new(0.0, 0.0, 0.0)
   }
 
-  fn normal_at_with_uv(&self, point: &Point, u: f64, v: f64) -> Vector {
+  fn normal_at_with_uv(&self, _point: &Point, _u: f64, _v: f64) -> Vector {
     Vector::new(0.0, 0.0, 0.0)
   }
 

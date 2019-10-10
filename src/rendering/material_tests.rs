@@ -1,17 +1,15 @@
 #[cfg(test)]
 mod tests {
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Sphere;
+  use crate::rendering::math::Point;
+
+  use crate::rendering::math::Color;
+
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Sphere;
 
   use crate::rendering::Material;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn sets_values() {
@@ -32,7 +30,7 @@ mod tests {
   fn solid_material_always_returns_single_color() {
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.0, 1.0, 0.0, 1.0), Matrix4x4::identity());
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let solid_material = sphere.get_material();
 
@@ -53,7 +51,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let checkered_material = sphere.get_material();
 
@@ -71,7 +69,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let checkered_material = sphere.get_material();
 
@@ -89,7 +87,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let checkered_material = sphere.get_material();
 
@@ -107,7 +105,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let checkered_material = sphere.get_material();
 
@@ -125,7 +123,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let striped_material = sphere.get_material();
 
@@ -143,7 +141,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let striped_material = sphere.get_material();
 
@@ -161,7 +159,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let striped_material = sphere.get_material();
 
@@ -182,7 +180,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let ringed_material = sphere.get_material();
 
@@ -200,7 +198,7 @@ mod tests {
       Matrix4x4::identity()
     );
     
-    let sphere = &Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = &Sphere::new(Matrix4x4::identity(), material);
 
     let gradient_material = sphere.get_material();
 

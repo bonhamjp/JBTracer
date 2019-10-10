@@ -2,7 +2,12 @@
 mod tests {
   use std::f64;
 
-  use crate::rendering::Canvas;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
+
+  use crate::rendering::math::Color;
+
+  use crate::rendering::math::Matrix4x4;
 
   use crate::rendering::Scene;
 
@@ -10,9 +15,9 @@ mod tests {
 
   use crate::rendering::PointLight;
 
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Sphere;
-  use crate::rendering::Plane;
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Sphere;
+  use crate::rendering::shapes::Plane;
 
   use crate::rendering::Container;
 
@@ -22,21 +27,13 @@ mod tests {
   use crate::rendering::Intersection;
   use crate::rendering::Computations;
 
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
-
   #[test]
   fn creating_scene_with_lights_and_objects() {
     let camera = Camera::new(200, 100, f64::consts::PI / 2.0, Matrix4x4::identity());
     
     let transform = Matrix4x4::translate(5.0, -3.0, 2.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = &Sphere::new(1, transform, material);
+    let sphere = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -57,11 +54,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -87,11 +84,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -100,7 +97,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(4.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection = Intersection::new(4.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -122,11 +119,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -135,7 +132,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(0.5, scene.containers[0].shapes[1], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection = Intersection::new(0.5, scene.containers[0].shapes[1], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -157,11 +154,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -186,11 +183,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -215,11 +212,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(1.0, 0.1, 0.1, 100.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -248,11 +245,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -277,11 +274,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -301,11 +298,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -325,11 +322,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -349,11 +346,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -373,11 +370,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -386,7 +383,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 5.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(4.0, scene.containers[0].shapes[1], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection = Intersection::new(4.0, scene.containers[0].shapes[1], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -408,11 +405,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
     
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -421,7 +418,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 0.0, 1.0));
 
-    let mut intersection = Intersection::new(1.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection = Intersection::new(1.0, scene.containers[0].shapes[0], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -443,15 +440,15 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.5, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let plane = &Plane::new(3, transform, material);
+    let plane = &Plane::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, plane as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -460,7 +457,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -3.0), &Vector::new(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0));
 
-    let mut intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[2], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[2], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -482,15 +479,15 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.5, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let plane = &Plane::new(3, transform, material);
+    let plane = &Plane::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, plane as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -499,7 +496,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -3.0), &Vector::new(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0));
 
-    let mut intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[2], Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection = Intersection::new((2.0 as f64).sqrt(), scene.containers[0].shapes[2], Matrix4x4::identity(), Matrix4x4::identity());
     let mut intersections = Vec::new();
     intersections.push(intersection);
     
@@ -521,11 +518,11 @@ mod tests {
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 1.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let plane_1 = &Plane::new(1, transform, material);
+    let plane_1 = &Plane::new(transform, material);
 
     let transform = Matrix4x4::translate(0.0, 1.0, 0.0);
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 1.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let plane_2 = &Plane::new(2, transform, material);
+    let plane_2 = &Plane::new(transform, material);
 
     let container_objects = vec![plane_1 as &dyn Shape, plane_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -534,7 +531,7 @@ mod tests {
 
     let ray = Ray::new(&Point::new(0.0, 0.0, 0.0), &Vector::new(0.0, 1.0, 0.0));
 
-    let bottom_out_color = scene.color_at(&ray, 4);
+    let _bottom_out_color = scene.color_at(&ray, 4);
   }
 
   #[test]
@@ -545,7 +542,7 @@ mod tests {
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.5, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let plane = &Plane::new(1, transform, material);
+    let plane = &Plane::new(transform, material);
 
     let container_objects = vec![plane as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -576,11 +573,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.8, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
     
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -613,11 +610,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.8, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -650,11 +647,11 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(0.1, 0.8, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -687,7 +684,7 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = &Sphere::new(1, transform, material);
+    let sphere = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -717,7 +714,7 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = &Sphere::new(1, transform, material);
+    let sphere = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -747,7 +744,7 @@ mod tests {
 
     let transform = Matrix4x4::identity();
     let material = Material::solid(1.0, 0.7, 0.2, 200.0, 0.0, 1.0, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = &Sphere::new(1, transform, material);
+    let sphere = &Sphere::new(transform, material);
 
     let container_objects = vec![sphere as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);
@@ -775,19 +772,19 @@ mod tests {
     
     let transform = Matrix4x4::identity();
     let material = Material::solid(0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0, Color::new(0.8, 1.0, 0.6, 1.0), Matrix4x4::identity());
-    let sphere_1 = &Sphere::new(1, transform, material);
+    let sphere_1 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::scale(0.5, 0.5, 0.5);
     let material = Material::solid(1.0, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere_2 = &Sphere::new(2, transform, material);
+    let sphere_2 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::translate(0.0, -3.5, -0.5);
     let material = Material::solid(0.5, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 0.0, 0.0, 1.0), Matrix4x4::identity());
-    let sphere_3 = &Sphere::new(3, transform, material);
+    let sphere_3 = &Sphere::new(transform, material);
 
     let transform = Matrix4x4::translate(0.0, -1.0, 0.0);
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.5, 0.5, 1.5, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let plane = &Plane::new(4, transform, material);
+    let plane = &Plane::new(transform, material);
 
     let container_objects = vec![sphere_1 as &dyn Shape, sphere_2 as &dyn Shape, sphere_3 as &dyn Shape, plane as &dyn Shape];
     let container = Container::new(Matrix4x4::identity(), container_objects);

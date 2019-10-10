@@ -1,38 +1,30 @@
 use std::f64;
 
+use crate::rendering::math::tuple::Tuple;
+use crate::rendering::math::Point;
+
+use crate::rendering::math::Color;
+
 use crate::rendering::Canvas;
 
 use crate::rendering::Camera;
 
 use crate::rendering::PointLight;   
 
-use crate::rendering::shape::Shape;
-
 use crate::rendering::ConstructiveGeometry;
 
 use crate::rendering::Container;
-
-use crate::rendering::Material;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
 use crate::rendering::Computations;
 
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Color;
-
-use crate::math::Matrix4x4;
-
-const RAY_CAST_DEPTH: u32 = 8;
+const RAY_CAST_DEPTH: u32 = 128;
 
 pub struct Scene<'a> {
   pub camera: Camera,
   pub lights: Vec<PointLight>,
-  pub containers: Vec<Container<'a>>,
-  pub constructive_geometries: Vec<ConstructiveGeometry<'a>> // TODO: Implement this separately from containers
+  pub containers: Vec<Container<'a>>
 }
 
 impl<'a> Scene<'a> {
@@ -40,8 +32,7 @@ impl<'a> Scene<'a> {
     Scene { 
       camera: camera, 
       lights: lights, 
-      containers: containers,
-      constructive_geometries: Vec::new()
+      containers: containers
     }
   }
 
@@ -183,7 +174,7 @@ impl<'a> Scene<'a> {
       cos = cos_t;
     }
 
-    let c_0 = ((computations.n1 - computations.n2) / (computations.n1 + computations.n2));
+    let c_0 = (computations.n1 - computations.n2) / (computations.n1 + computations.n2);
     let r_0 = c_0 * c_0;
 
     let sub_cos = 1.0 - cos;

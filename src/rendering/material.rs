@@ -1,22 +1,16 @@
-use crate::rendering::shape::Shape;
-use crate::rendering::shape::ShapeType;
+use crate::rendering::math::Point;
 
-use crate::rendering::Ray;
-use crate::rendering::Intersection;
+use crate::rendering::math::Color;
 
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
+use crate::rendering::math::Matrix4x4;
 
-use crate::math::Color;
+use crate::rendering::shapes::shape::Shape;
 
-use crate::math::Matrix4x4;
-
-const VACUUM_REFRACTIVE_INDEX: f64 = 1.0;
-const AIR_REFRACTIVE_INDEX: f64 = 1.00029;
-const WATER_REFRACTIVE_INDEX: f64 = 1.333;
-const GLASS_REFRACTIVE_INDEX: f64 = 1.52;
-const DIAMOND_REFRACTIVE_INDEX: f64 = 2.417;
+// const VACUUM_REFRACTIVE_INDEX: f64 = 1.0;
+// const AIR_REFRACTIVE_INDEX: f64 = 1.00029;
+// const WATER_REFRACTIVE_INDEX: f64 = 1.333;
+// const GLASS_REFRACTIVE_INDEX: f64 = 1.52;
+// const DIAMOND_REFRACTIVE_INDEX: f64 = 2.417;
 
 pub struct Material {
   pub ambient: f64,
@@ -179,14 +173,8 @@ impl Material {
   }
 
   pub fn convert_point(&self, object: &dyn Shape, position: &Point) -> Point {
-    // let object_point = object.get_inverse().mult_point(position);
-    
-    // self.inverse.mult_point(&object_point)
-
-
     let object_point = object.get_inverse().mult_point(position);
-    // let pattern_point = material.pattern.get_transform().inverse().mult_point(&object_point);
-
+    
     self.inverse.mult_point(&object_point)
   }
 
@@ -195,15 +183,15 @@ impl Material {
   }
 }
 
-pub fn solid_pattern_func(material: &Material, object: &dyn Shape, position: &Point) -> Color {
+pub fn solid_pattern_func(material: &Material, _object: &dyn Shape, _position: &Point) -> Color {
   material.color_1
 }
 
 pub fn checker_pattern_func(material: &Material, object: &dyn Shape, position: &Point) -> Color {
   let pattern_point = material.convert_point(object, position);
 
-  let summed_floor = (pattern_point.x.round() + pattern_point.y.round() + pattern_point.z.round());
-  if (summed_floor as u64) % 2 == 0 { // TODO: Add global epsilon
+  let summed_floor = pattern_point.x.round() + pattern_point.y.round() + pattern_point.z.round();
+  if (summed_floor as u64) % 2 == 0 {
     material.color_1
   } else {
     material.color_2
@@ -215,7 +203,7 @@ pub fn stripe_pattern_func(material: &Material, object: &dyn Shape, position: &P
 
   let adjusted_x;
   
-  if (pattern_point.x < 0.0) {
+  if pattern_point.x < 0.0 {
     adjusted_x = (((pattern_point.x) * -1.0) + 1.0) as u64;
   } else {
     adjusted_x = pattern_point.x as u64;

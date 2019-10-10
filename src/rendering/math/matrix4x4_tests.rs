@@ -2,12 +2,10 @@
 mod tests {
   use std::f64;
 
-  use crate::math::Matrix4x4;
-  use crate::math::Matrix3x3;
+  use crate::rendering::math::Matrix4x4;
 
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
 
   #[test]
   fn new_sets_values() {
@@ -383,7 +381,6 @@ mod tests {
 
     let (full_quarter_rotated_x, full_quarter_rotated_y, full_quarter_rotated_z, _) = x_full_quarter_rotation.mult4x1(&point);
 
-    // TODO: use global delta
     assert!((full_quarter_rotated_x - 0.0).abs() < 0.0001);
     assert!((full_quarter_rotated_y - 0.0).abs() < 0.0001);
     assert!((full_quarter_rotated_z - 1.0).abs() < 0.0001);
@@ -399,7 +396,6 @@ mod tests {
 
     let (inverse_half_quarter_rotated_x, inverse_half_quarter_rotated_y, inverse_half_quarter_rotated_z, _) = inverse.mult4x1(&point);
 
-    // TODO: use global delta
     assert!((inverse_half_quarter_rotated_x - 0.0).abs() < 0.0001);
     assert!((inverse_half_quarter_rotated_y - ((2.0 as f64).sqrt()) / 2.0).abs() < 0.0001);
     assert!((inverse_half_quarter_rotated_z - (-(2.0 as f64).sqrt()) / 2.0).abs() < 0.0001);
@@ -421,7 +417,6 @@ mod tests {
 
     let (full_quarter_rotated_x, full_quarter_rotated_y, full_quarter_rotated_z, _) = y_full_quarter_rotation.mult4x1(&point);
 
-    // TODO: use global delta
     assert!((full_quarter_rotated_x - 1.0).abs() < 0.0001);
     assert!((full_quarter_rotated_y - 0.0).abs() < 0.0001);
     assert!((full_quarter_rotated_z - 0.0).abs() < 0.0001);
@@ -443,7 +438,6 @@ mod tests {
 
     let (full_quarter_rotated_x, full_quarter_rotated_y, full_quarter_rotated_z, _) = z_full_quarter_rotation.mult4x1(&point);
 
-    // TODO: use global delta
     assert!((full_quarter_rotated_x - -1.0).abs() < 0.0001);
     assert!((full_quarter_rotated_y - 0.0).abs() < 0.0001);
     assert!((full_quarter_rotated_z - 0.0).abs() < 0.0001);
@@ -537,7 +531,6 @@ mod tests {
 
     let (rotated_x, rotated_y, rotated_z, _) = x_rotation.mult4x1(&point_1);
 
-    // TODO: use global delta
     assert!((rotated_x - 1.0).abs() < 0.0001);
     assert!((rotated_y - -1.0).abs() < 0.0001);
     assert!((rotated_z - 0.0).abs() < 0.0001);
@@ -546,7 +539,6 @@ mod tests {
 
     let (scaled_x, scaled_y, scaled_z, _) = scaling.mult4x1(&point_2);
 
-    // TODO: use global delta
     assert!((scaled_x - 5.0).abs() < 0.0001);
     assert!((scaled_y - -5.0).abs() < 0.0001);
     assert!((scaled_z - 0.0).abs() < 0.0001);
@@ -555,7 +547,6 @@ mod tests {
 
     let (translated_x, translated_y, translated_z, _) = translation.mult4x1(&point_3);
 
-    // TODO: use global delta
     assert!((translated_x - 15.0).abs() < 0.0001);
     assert!((translated_y - 0.0).abs() < 0.0001);
     assert!((translated_z - 7.0).abs() < 0.0001);
@@ -574,7 +565,6 @@ mod tests {
 
     let (transformed_x, transformed_y, transformed_z, _) = chained_transformation.mult4x1(&point);
 
-    // TODO: use global delta
     assert!((transformed_x - 15.0).abs() < 0.0001);
     assert!((transformed_y - 0.0).abs() < 0.0001);
     assert!((transformed_z - 7.0).abs() < 0.0001);

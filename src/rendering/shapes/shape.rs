@@ -1,15 +1,18 @@
-use std::any::Any;
-use std::ptr;
+extern crate chrono;
+use chrono::Utc;
+
+extern crate rand;
+use rand::Rng;
+
+use crate::rendering::math::Matrix4x4;
+
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
 
 use crate::rendering::Material;
-
-use crate::math::Matrix4x4;
-
-use crate::math::Point;
-use crate::math::Vector;
 
 #[derive(PartialEq)]
 pub enum ShapeType {
@@ -42,6 +45,12 @@ pub trait Shape {
   fn get_base_type(&self) -> ShapeType;
   
   fn is_eq(&self, r_hand: &Shape) -> bool {
-    self.get_id() == r_hand.get_id()
+    self.get_base_type() == r_hand.get_base_type() && self.get_id() == r_hand.get_id()
   }
+}
+
+pub fn generate_shape_id() -> u64 {
+  let mut range = rand::thread_rng();
+  
+  (Utc::now().timestamp_subsec_micros() as u64) + range.gen_range(0, 1000000)
 }

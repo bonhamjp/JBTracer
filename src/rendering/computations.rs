@@ -1,13 +1,11 @@
-use crate::rendering::shape::Shape;
+use crate::rendering::math::tuple::Tuple;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
+
+use crate::rendering::shapes::shape::Shape;
 
 use crate::rendering::Intersection;
 use crate::rendering::Ray;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
 
 pub struct Computations<'a> {
   pub t: f64,
@@ -50,10 +48,10 @@ impl<'a> Computations<'a> {
     }
 
     // Point slightly off of object surface prevents shadow precision error
-    let over_point = point.add_vector(&normal.multiply(0.001)); // TODO: Use global epsilon 
+    let over_point = point.add_vector(&normal.multiply(0.001)); 
     
     // Point slightly under surface of object, for refraction calculations
-    let under_point = point.subtract_vector(&normal.multiply(0.001)); // TODO: Use global epsilon
+    let under_point = point.subtract_vector(&normal.multiply(0.001));
 
     // Refractive indices of a materials being transitioned to and from
     let (n1, n2) = calculate_refractive_indices(hit, intersections);

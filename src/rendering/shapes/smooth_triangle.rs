@@ -1,59 +1,60 @@
-use crate::rendering::shape::Shape;
-use crate::rendering::shape::ShapeType;
+use crate::rendering::math::tuple::Tuple;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
+
+use crate::rendering::math::Matrix4x4;
+
+use crate::rendering::shapes::shape::Shape;
+use crate::rendering::shapes::shape::ShapeType;
+use crate::rendering::shapes::shape::generate_shape_id;
 
 use crate::rendering::Material;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
 
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
-
-pub struct Triangle {
+pub struct SmoothTriangle {
   pub id: u64,
   pub point_1: Point,
   pub point_2: Point,
   pub point_3: Point,
+  pub normal_1: Vector,
+  pub normal_2: Vector,
+  pub normal_3: Vector,
   pub edge_1: Vector,
   pub edge_2: Vector,
-  pub normal: Vector,
   pub transform: Matrix4x4,
   pub inverse: Matrix4x4,
   pub transpose: Matrix4x4,
-  pub transformed_normal: Vector,
   pub material: Material
 }
 
-impl Triangle {
-  pub fn new(id: u64, point_1: Point, point_2: Point, point_3: Point, transform: Matrix4x4, material: Material) -> Triangle {
+impl SmoothTriangle {
+  pub fn new(point_1: Point, point_2: Point, point_3: Point, normal_1: Vector, normal_2: Vector, normal_3: Vector, transform: Matrix4x4, material: Material) -> SmoothTriangle {
     let tmp_inverse = transform.inverse();
 
     let edge_1 = point_2.subtract_point(&point_1);
     let edge_2 = point_3.subtract_point(&point_1);
     
-    let normal = edge_2.cross(&edge_1).normalize();
-
-    Triangle { 
-      id: id,
+    SmoothTriangle {
+      id: generate_shape_id(),
       point_1: point_1,
       point_2: point_2,
       point_3: point_3,
+      normal_1: normal_1,
+      normal_2: normal_2,
+      normal_3: normal_3,
       edge_1: edge_1,
       edge_2: edge_2,
-      normal: normal,
       transform: transform,
       inverse: tmp_inverse,
       transpose: tmp_inverse.transpose(),
-      transformed_normal: tmp_inverse.transpose().mult_vector(&normal).normalize(),
       material: material
     }
   }
 }
 
-impl Shape for Triangle {
+impl Shape for SmoothTriangle {
   fn get_id(&self) -> u64 {
     self.id
   }
@@ -113,31 +114,30 @@ impl Shape for Triangle {
 
     let t = f * self.edge_2.dot(&origin_cross_e_1);
 
-    intersections.push(Intersection::new(t, self, world_to_container, normal_to_world));
+    intersections.push(Intersection::new_with_uv(t, self, world_to_container, normal_to_world, u, v));
 
     intersections
   }
 
-  fn normal_at(&self, point: &Point) -> Vector {
-    // let mut transformed_normal = self.transpose.mult_vector(&self.normal);
-    // transformed_normal.w = 0.0;
-    // transformed_normal.normalize();
-
-    // transformed_normal 
-
-    self.transformed_normal
+  fn normal_at(&self, _point: &Point) -> Vector {
+    // Not defined
+    Vector::new(0.0, 0.0, 0.0)
   }
 
-  fn normal_at_with_uv(&self, point: &Point, u: f64, v: f64) -> Vector {
-    // Not defined
-    Vector::new(0.0, 0.0, 0.0)     
+  fn normal_at_with_uv(&self, _point: &Point, u: f64, v: f64) -> Vector {
+    // Interpolates normals
+    let i_1 = self.transpose.mult_vector(&self.normal_2).multiply(u);
+    let i_2 = self.transpose.mult_vector(&self.normal_3).multiply(v);
+    let i_3 = self.transpose.mult_vector(&self.normal_1).multiply(1.0 - u - v);
+
+    i_1.add_vector(&i_2).add_vector(&i_3).normalize()
   }
 
   fn interpolates_normals(&self) -> bool {
-    false
+    true
   }
 
   fn get_base_type(&self) -> ShapeType {
-    ShapeType::Triangle
+    ShapeType::SmoothTriangle
   }
 }

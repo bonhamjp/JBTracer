@@ -1,10 +1,15 @@
 #[cfg(test)]
 mod tests {
-  use std::f64;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
+  
+  use crate::rendering::math::Color;
 
-  use crate::rendering::shape::Shape;
-  use crate::rendering::Sphere;
-  use crate::rendering::Cube;
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::Sphere;
+  use crate::rendering::shapes::Cube;
 
   use crate::rendering::ConstructiveGeometry;
   use crate::rendering::ConstructiveOperation;
@@ -14,21 +19,13 @@ mod tests {
   
   use crate::rendering::Material;
 
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-  
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
-
   #[test]
   fn contructive_geometry_created_with_transform_and_material_and_left_and_right_shapes() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
@@ -46,10 +43,10 @@ mod tests {
   #[test]
   fn checking_if_intersection_allowed_for_union() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
@@ -67,10 +64,10 @@ mod tests {
   #[test]
   fn checking_if_intersection_allowed_for_intersection() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Intersection);
@@ -88,10 +85,10 @@ mod tests {
   #[test]
   fn checking_if_intersection_allowed_for_difference() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Difference);
@@ -109,19 +106,19 @@ mod tests {
   #[test]
   fn filtering_union_intersections() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
 
-    let mut intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_3 = Intersection::new(3.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_4 = Intersection::new(4.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersections = vec![intersection_1, intersection_2, intersection_3, intersection_4];
+    let intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_3 = Intersection::new(3.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_4 = Intersection::new(4.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersections = vec![intersection_1, intersection_2, intersection_3, intersection_4];
 
     let filtered_intersections = constructive_geometry.filter_intersections(intersections);
 
@@ -134,19 +131,19 @@ mod tests {
   #[test]
   fn filtering_intersection_intersections() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Intersection);
 
-    let mut intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_3 = Intersection::new(3.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_4 = Intersection::new(4.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersections = vec![intersection_1, intersection_2, intersection_3, intersection_4];
+    let intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_3 = Intersection::new(3.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_4 = Intersection::new(4.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersections = vec![intersection_1, intersection_2, intersection_3, intersection_4];
 
     let filtered_intersections = constructive_geometry.filter_intersections(intersections);
 
@@ -159,19 +156,19 @@ mod tests {
   #[test]
   fn filtering_difference_intersections() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Difference);
 
-    let mut intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_3 = Intersection::new(3.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersection_4 = Intersection::new(4.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
-    let mut intersections = vec![intersection_1, intersection_2, intersection_3, intersection_4];
+    let intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_3 = Intersection::new(3.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersection_4 = Intersection::new(4.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
+    let intersections = vec![intersection_1, intersection_2, intersection_3, intersection_4];
 
     let filtered_intersections = constructive_geometry.filter_intersections(intersections);
 
@@ -184,10 +181,10 @@ mod tests {
   #[test]
   fn ray_misses_constructive_geometry_object() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::translate(0.0, 0.0, 0.5), material);
+    let cube = Cube::new(Matrix4x4::translate(0.0, 0.0, 0.5), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
@@ -207,10 +204,10 @@ mod tests {
   #[test]
   fn ray_hits_constructive_geometry_object() {
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let sphere = Sphere::new(1, Matrix4x4::identity(), material);
+    let sphere = Sphere::new(Matrix4x4::identity(), material);
     
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let cube = Cube::new(2, Matrix4x4::identity(), material);
+    let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
     let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);

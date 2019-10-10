@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
+  use crate::rendering::math::Color;
+
   use crate::rendering::Canvas;
-
-  use crate::math::Color;
-
+  
   #[test]
   fn new_canvas_sets_width_height_and_correct_sized_buffer() {
     let canvas = Canvas::new(4, 2);

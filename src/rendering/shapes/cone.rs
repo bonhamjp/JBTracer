@@ -1,16 +1,16 @@
-use crate::rendering::shape::Shape;
-use crate::rendering::shape::ShapeType;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
+
+use crate::rendering::math::Matrix4x4;
+
+use crate::rendering::shapes::shape::Shape;
+use crate::rendering::shapes::shape::ShapeType;
+use crate::rendering::shapes::shape::generate_shape_id;
 
 use crate::rendering::Material;
 
 use crate::rendering::Ray;
 use crate::rendering::Intersection;
-
-use crate::math::tuple::Tuple;
-use crate::math::Point;
-use crate::math::Vector;
-
-use crate::math::Matrix4x4;
 
 pub struct Cone {
   pub id: u64,
@@ -24,11 +24,11 @@ pub struct Cone {
 }
 
 impl Cone {
-  pub fn new(id: u64, transform: Matrix4x4, capped: bool, minimum: f64, maximum: f64, material: Material) -> Cone {
+  pub fn new(transform: Matrix4x4, capped: bool, minimum: f64, maximum: f64, material: Material) -> Cone {
     let tmp_inverse = transform.inverse();
 
     Cone { 
-      id: id, 
+      id: generate_shape_id(), 
       transform: transform,
       inverse: tmp_inverse,
       transpose: tmp_inverse.transpose(),
@@ -137,7 +137,7 @@ impl Shape for Cone {
     
     let distance = object_point.x * object_point.x + object_point.z * object_point.z;
 
-    let mut object_normal;
+    let object_normal;
 
     // Normal from top cap
     if distance < 1.0 && object_point.y >= (self.maximum - 0.0001) {
@@ -158,14 +158,10 @@ impl Shape for Cone {
       object_normal = Vector::new(object_point.x, y, object_point.z).normalize();
     }
 
-    let mut transformed_normal = self.transpose.mult_vector(&object_normal).normalize();
-    // transformed_normal.w = 0.0;
-    // transformed_normal.normalize();
-
-    transformed_normal     
+    self.transpose.mult_vector(&object_normal).normalize()
   }
 
-  fn normal_at_with_uv(&self, point: &Point, u: f64, v: f64) -> Vector {
+  fn normal_at_with_uv(&self, _point: &Point, _u: f64, _v: f64) -> Vector {
     // Not defined
     Vector::new(0.0, 0.0, 0.0)     
   }

@@ -1,5 +1,5 @@
-use crate::math::tuple::Tuple;
-use crate::math::point::Point;
+use crate::rendering::math::tuple::Tuple;
+use crate::rendering::math::point::Point;
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub struct Vector {

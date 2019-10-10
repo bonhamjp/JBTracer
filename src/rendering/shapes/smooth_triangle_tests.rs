@@ -1,22 +1,17 @@
 #[cfg(test)]
 mod tests {
-  use std::f64;
-
-  use crate::rendering::shape::Shape;
-  use crate::rendering::SmoothTriangle;
-
-  use crate::rendering::Ray;
-  use crate::rendering::Intersection;
+  use crate::rendering::math::tuple::Tuple;
+  use crate::rendering::math::Point;
+  use crate::rendering::math::Vector;
   
+  use crate::rendering::math::Color;
+
+  use crate::rendering::math::Matrix4x4;
+
+  use crate::rendering::shapes::shape::Shape;
+  use crate::rendering::shapes::SmoothTriangle;
+
   use crate::rendering::Material;
-
-  use crate::math::tuple::Tuple;
-  use crate::math::Point;
-  use crate::math::Vector;
-  
-  use crate::math::Color;
-
-  use crate::math::Matrix4x4;
 
   #[test]
   fn smooth_triangle_created_with_points_transform_and_material() {
@@ -29,7 +24,7 @@ mod tests {
     let normal_1 = Vector::new(0.0, 1.0, 0.0);
     let normal_2 = Vector::new(-1.0, 0.0, 0.0);
     let normal_3 = Vector::new(1.0, 0.0, 0.0);
-    let smooth_triangle = SmoothTriangle::new(1, point_1, point_2, point_3, normal_1, normal_2, normal_3, transform, material);
+    let smooth_triangle = SmoothTriangle::new(point_1, point_2, point_3, normal_1, normal_2, normal_3, transform, material);
 
     assert!(smooth_triangle.transform == Matrix4x4::translate(0.0, 0.0, 0.0));
     assert!(smooth_triangle.point_1.get_quad() == Point::new(0.0, 1.0, 0.0).get_quad());
@@ -57,7 +52,7 @@ mod tests {
     let normal_1 = Vector::new(0.0, 1.0, 0.0);
     let normal_2 = Vector::new(-1.0, 0.0, 0.0);
     let normal_3 = Vector::new(1.0, 0.0, 0.0);
-    let smooth_triangle = SmoothTriangle::new(1, point_1, point_2, point_3, normal_1, normal_2, normal_3, transform, material);
+    let smooth_triangle = SmoothTriangle::new(point_1, point_2, point_3, normal_1, normal_2, normal_3, transform, material);
 
     let normal = smooth_triangle.normal_at_with_uv(&Point::new(0.0, 0.0, 0.0), 0.45, 0.25);
 

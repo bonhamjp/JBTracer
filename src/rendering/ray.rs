@@ -1,8 +1,6 @@
-use crate::rendering::Intersection;
-
-use crate::math::Matrix4x4;
-use crate::math::Point;
-use crate::math::Vector;
+use crate::rendering::math::Matrix4x4;
+use crate::rendering::math::Point;
+use crate::rendering::math::Vector;
 
 pub struct Ray {
   pub origin: Point,

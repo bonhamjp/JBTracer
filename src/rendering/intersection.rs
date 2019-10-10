@@ -1,6 +1,6 @@
-use crate::rendering::shape::Shape;
+use crate::rendering::math::Matrix4x4;
 
-use crate::math::Matrix4x4;
+use crate::rendering::shapes::shape::Shape;
 
 pub struct Intersection<'a> {
   pub t: f64,
