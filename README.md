@@ -29,6 +29,8 @@ Four patterns are available:
 These patterns can be drawn to the surface of any primitive:
 $$ ADD IMAGE OF ALL PATTERNS $$
 
+Multiple Point Lights can be used to illuminate scenes, and are used to generate dynamic shadows.
+
 JBTracer can also draw constructive geometries by evaluating unions, intersection and differences of the primitive types.
  $$ ADD ONE OR TWO IMAGES OF CONSTRUCTIVE GEOMETRIES $$
 
