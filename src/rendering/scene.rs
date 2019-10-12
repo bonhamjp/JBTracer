@@ -11,8 +11,6 @@ use crate::rendering::Camera;
 
 use crate::rendering::PointLight;   
 
-use crate::rendering::ConstructiveGeometry;
-
 use crate::rendering::Container;
 
 use crate::rendering::Ray;
@@ -184,12 +182,6 @@ impl<'a> Scene<'a> {
   pub fn render(&self) -> Canvas {
     let mut canvas = Canvas::new(self.camera.horizontal_size, self.camera.vertical_size);
 
-    // RUNTIME LOGGING
-    let total_pixels = (self.camera.horizontal_size * self.camera.vertical_size) as f64;
-    let mut pixels_drawn: f64 = 0.0;
-    let mut percent_done: f64 = 0.0;
-    // RUNTIME LOGGING
-
     for y in 0..self.camera.vertical_size {
       for x in 0..self.camera.horizontal_size {
         // No Anti-Aliasing
@@ -208,16 +200,6 @@ impl<'a> Scene<'a> {
         // color = color.divide_color(&Color::new(color_count, color_count, color_count, 1.0));
 
         canvas.color_pixel(y, x, color);
-
-        // RUNTIME LOGGING
-        pixels_drawn += 1.0;
-        let new_percent_done = (pixels_drawn / total_pixels) * 100.00;
-        if new_percent_done.floor() > percent_done.floor() {
-          println!("{}%", new_percent_done.floor());
-
-          percent_done = new_percent_done;
-        }
-        // RUNTIME LOGGING
       }
     }
 

@@ -1,3 +1,9 @@
+extern crate chrono;
+use chrono::Utc;
+
+extern crate rand;
+use rand::Rng;
+
 use crate::rendering::math::Point;
 use crate::rendering::math::Vector;
 
@@ -30,7 +36,11 @@ pub struct ConstructiveGeometry<'a> {
 }
 
 impl<'a> ConstructiveGeometry<'a> {
-  pub fn new(id: u64, transform: Matrix4x4, material: Material, left_side: &'a dyn Shape, right_side: &'a dyn Shape, operation: ConstructiveOperation) -> ConstructiveGeometry<'a> {
+  pub fn new(transform: Matrix4x4, material: Material, left_side: &'a dyn Shape, right_side: &'a dyn Shape, operation: ConstructiveOperation) -> ConstructiveGeometry<'a> {
+    let mut range = rand::thread_rng();
+  
+    let id = (Utc::now().timestamp_subsec_micros() as u64) + range.gen_range(0, 1000000);
+    
     let tmp_inverse = transform.inverse();
 
     ConstructiveGeometry { 

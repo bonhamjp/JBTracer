@@ -28,7 +28,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
 
     assert!(constructive_geometry.transform == Matrix4x4::identity());
     assert!(constructive_geometry.material.ambient == 0.1);
@@ -49,7 +49,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
 
     assert_eq!(constructive_geometry.intersection_allowed(true, true, true), false);
     assert_eq!(constructive_geometry.intersection_allowed(true, true, false), true);
@@ -70,7 +70,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Intersection);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Intersection);
 
     assert_eq!(constructive_geometry.intersection_allowed(true, true, true), true);
     assert_eq!(constructive_geometry.intersection_allowed(true, true, false), false);
@@ -91,7 +91,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Difference);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Difference);
 
     assert_eq!(constructive_geometry.intersection_allowed(true, true, true), false);
     assert_eq!(constructive_geometry.intersection_allowed(true, true, false), true);
@@ -112,7 +112,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
 
     let intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
     let intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
@@ -137,7 +137,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Intersection);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Intersection);
 
     let intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
     let intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
@@ -162,7 +162,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Difference);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Difference);
 
     let intersection_1 = Intersection::new(1.0, constructive_geometry.left_side, Matrix4x4::identity(), Matrix4x4::identity());
     let intersection_2 = Intersection::new(2.0, constructive_geometry.right_side, Matrix4x4::identity(), Matrix4x4::identity());
@@ -187,7 +187,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::translate(0.0, 0.0, 0.5), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
 
     let ray = Ray::new(&Point::new(0.0, 0.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
@@ -210,7 +210,7 @@ mod tests {
     let cube = Cube::new(Matrix4x4::identity(), material);
 
     let material = Material::solid(0.1, 0.9, 0.9, 200.0, 0.0, 0.0, 1.0, Color::new(1.0, 1.0, 1.0, 1.0), Matrix4x4::identity());
-    let constructive_geometry = ConstructiveGeometry::new(3, Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
+    let constructive_geometry = ConstructiveGeometry::new(Matrix4x4::identity(), material, &sphere, &cube, ConstructiveOperation::Union);
 
     let ray = Ray::new(&Point::new(0.0, 2.0, -5.0), &Vector::new(0.0, 0.0, 1.0));
 
